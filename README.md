@@ -23,7 +23,7 @@ Ego AI will become an indispensable tool in your life.
 
 > docker-compose up --build
 
-4. For entering to backend use:
+4. For entering to frontend use:
 
 > http://localhost:3000
 
