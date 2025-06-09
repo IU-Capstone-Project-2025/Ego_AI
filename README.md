@@ -6,6 +6,12 @@ Ego AI is your personal assistant in everyday life. He will help you with the al
 
 Ego AI will become an indispensable tool in your life.
 
+## Software Requirements
+
+- Docker  minimum version of 28.2.2
+ 
+- Docker compose  minimum version of 2.35.1
+
 
 ## How to use Ego AI?
 
