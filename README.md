@@ -41,7 +41,7 @@ Ego AI will become an indispensable tool in your life.
 
 > http://localhost:8000/docs
 
-**using redy server**
+**using ready server**
 
 1. User interface
 
