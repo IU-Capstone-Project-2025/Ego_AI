@@ -1,281 +1,193 @@
-# Документация по бэкенду EgoAI
+# EgoAI Backend Documentation
 
-Это подробное руководство по настройке, запуску, тестированию и использованию бэкенда EgoAI.
+This is a detailed guide for setting up, running, testing, and integrating the EgoAI backend. For a quick introduction to the project architecture and understanding how to contribute, see [Developer Guide](./DEVELOPER_GUIDE.md).
 
-## Содержание
+## Table of Contents
 
-1.  [Обзор](#1-обзор)
-2.  [Настройка среды разработки](#2-настройка-среды-разработки)
-    *   [Требования](#требования)
-    *   [Клонирование репозитория](#клонирование-репозитория)
-    *   [Создание и активация виртуальной среды](#создание-и-активация-виртуальной-среды)
-    *   [Установка зависимостей](#установка-зависимостей)
-    *   [Настройка переменных среды](#настройка-переменных-среды)
-3.  [Управление базой данных с помощью Alembic](#3-управление-базой-данных-с-помощью-alembic)
-    *   [Настройка и создание базы данных](#настройка-и-создание-базы-данных)
-    *   [Создание миграций](#создание-миграций)
-    *   [Применение миграций](#применение-миграций)
-    *   [Откат миграций](#откат-миграций)
-4.  [Запуск приложения](#4-запуск-приложения)
-5.  [Тестирование API (ручное)](#5-тестирование-api-ручное)
-    *   [Swagger UI](#swagger-ui)
-    *   [Инструменты для API](#инструменты-для-api)
-6.  [Запуск тестов и анализ покрытия](#6-запуск-тестов-и-анализ-покрытия)
-    *   [Настройка тестовой среды](#настройка-тестовой-среды)
-    *   [Запуск тестов](#запуск-тестов)
-    *   [Анализ покрытия кода](#анализ-покрытия-кода)
-7.  [Структура проекта](#7-структура-проекта)
-8.  [Развертывание (Docker)](#8-развертывание-docker)
+1.  [Overview](#1-overview)
+2.  [Development Environment Setup](#2-development-environment-setup)
+    *   [Requirements](#requirements)
+    *   [Installation](#installation)
+    *   [Environment Variables Setup (.env)](#environment-variables-setup-env)
+3.  [Database Management (Alembic)](#3-database-management-alembic)
+4.  [Running the Application](#4-running-the-application)
+    *   [Development Mode](#development-mode)
+    *   [Production Mode (Local)](#production-mode-local)
+5.  [Frontend Integration](#5-frontend-integration)
+6.  [API Testing (Manual)](#6-api-testing-manual)
+7.  [Automated Tests (Pytest)](#7-automated-tests-pytest)
+8.  [Project Structure](#8-project-structure)
+9.  [Running in Docker](#9-running-in-docker)
 
 ---
 
-## 1. Обзор
+## 1. Overview
 
-Бэкенд EgoAI построен на FastAPI с использованием SQLAlchemy для ORM и асинхронного взаимодействия с PostgreSQL. Он предоставляет RESTful API для управления пользователями, событиями, напоминаниями, взаимодействиями с ИИ и настройками пользователя. Проект следует четкой архитектуре с разделением ответственности (сервисный слой, слой доступа к данным) и поддерживает аутентификацию через Google OAuth2.
+The EgoAI backend is built on FastAPI using SQLAlchemy for ORM and asynchronous interaction with PostgreSQL. It provides a RESTful API for managing users, events, reminders, AI interactions, and user settings. The project follows a clear architecture with separation of concerns (service layer, data access layer) and supports authentication via Google OAuth2.
 
-## 2. Настройка среды разработки
+## 2. Development Environment Setup
 
-### Требования
-
-Перед началом работы убедитесь, что у вас установлены следующие компоненты:
+### Requirements
 
 *   Python 3.9+
-*   pip (менеджер пакетов Python)
-*   PostgreSQL (локально или через Docker)
+*   pip (Python package manager)
+*   PostgreSQL (locally or via Docker)
 *   Git
-*   (Необязательно) Docker и Docker Compose
 
-### Клонирование репозитория
+### Installation
 
-```bash
-git clone https://github.com/your-repo/Ego_AI.git
-cd Ego_AI/backend
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-repo/Ego_AI.git
+    cd Ego_AI/backend
+    ```
 
-### Создание и активация виртуальной среды
+2.  **Create and activate virtual environment:**
+    *   **Windows:** `python -m venv venv` and `.\\venv\\Scripts\\activate`
+    *   **macOS/Linux:** `python3 -m venv venv` and `source venv/bin/activate`
 
-Настоятельно рекомендуется использовать виртуальную среду для изоляции зависимостей проекта.
+3.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-**Windows:**
-```bash
-python -m venv venv
-.\venv\Scripts\activate
-```
+### Environment Variables Setup (.env)
 
-**macOS/Linux:**
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
+The backend uses environment variables for configuration. Create an `.env` file in the backend root directory (`Ego_AI/backend/`).
 
-### Установка зависимостей
+**Example `.env` file:**
 
-После активации виртуальной среды установите все необходимые пакеты, включая инструменты для разработки и тестирования:
-
-```bash
-pip install -r requirements.txt
-```
-
-### Настройка переменных среды
-
-Бэкенд использует переменные среды для конфигурации (например, учетные данные базы данных, секретные ключи). Вам необходимо создать файл `.env` в корневой директории бэкенда (`Ego_AI/backend/`) на основе файла `.env.example`.
-
-**Пример файла `.env**:**
-
-```
+```env
 # Ego_AI/backend/.env
 
-# Основные настройки безопасности
-SECRET_KEY="ВАШ_СЕКРЕТНЫЙ_КЛЮЧ_ДЛЯ_JWT" # Используйте secrets.token_urlsafe(32) для генерации
-ACCESS_TOKEN_EXPIRE_MINUTES=11520 # 8 дней (60 минут * 24 часа * 8 дней)
+# APPLICATION MODE
+# "development" - for local development with --reload (disables CSRF check for OAuth)
+# "production" - for running in Docker or locally without --reload (enables full security)
+ENVIRONMENT="development"
 
-# Настройки Google OAuth (получите их из Google Cloud Console)
-GOOGLE_CLIENT_ID="ВАШ_GOOGLE_CLIENT_ID"
-GOOGLE_CLIENT_SECRET="ВАШ_GOOGLE_CLIENT_SECRET"
-GOOGLE_REDIRECT_URI="http://localhost:8000/api/v1/auth/google/callback" # Должен совпадать с разрешенным URI перенаправления в Google Cloud Console
+# FRONTEND URL
+# Address where the user will be redirected after successful login
+FRONTEND_URL="http://localhost:3000"
 
-# Настройки базы данных PostgreSQL
-POSTGRES_SERVER="localhost" # Или имя сервиса Docker (например, db), если используете Docker Compose
-POSTGRES_USER="postgres"
-POSTGRES_PASSWORD="postgres" # Ваш пароль для PostgreSQL
-POSTGRES_DB="egoai" # Имя вашей базы данных
+# SECURITY
+SECRET_KEY="YOUR_VERY_SECRET_KEY" # Generate using: python -c 'import secrets; print(secrets.token_urlsafe(32))'
+ACCESS_TOKEN_EXPIRE_MINUTES=11520 # 8 days
 
-# DATABASE_URL (необязательно, если указаны POSTGRES_SERVER, USER, PASSWORD, DB)
-# DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost/egoai"
+# GOOGLE OAUTH
+# Get these from Google Cloud Console
+GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="YOUR_GOOGLE_CLIENT_SECRET"
+# This URI must be added to "Authorized redirect URIs" in Google OAuth settings
+GOOGLE_REDIRECT_URI="http://localhost:8000/api/v1/auth/google/callback"
+
+# POSTGRESQL DATABASE
+# Specify full connection URL
+DATABASE_URL="postgresql+asyncpg://postgres:postgres@localhost:5432/egoai"
 ```
 
-**Важно:**
-*   Замените плейсхолдеры (`ВАШ_...`) на свои фактические значения.
-*   Для `SECRET_KEY` сгенерируйте уникальное значение.
-*   `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` и `GOOGLE_REDIRECT_URI` необходимо получить из [Google Cloud Console](https://console.cloud.google.com/).
+**Important:** Replace placeholders (`YOUR_...`) with your actual values.
 
-## 3. Управление базой данных с помощью Alembic
+## 3. Database Management (Alembic)
 
-Alembic используется для управления всеми аспектами схемы базы данных.
+Alembic is used to manage all database schema migrations.
 
-### Настройка и создание базы данных
+1.  **Make sure your PostgreSQL server is running.**
+2.  **Apply all migrations** to create tables:
+    ```bash
+    alembic upgrade head
+    ```
+3.  After changing models in `app/database/models/models.py`, **create a new migration:**
+    ```bash
+    alembic revision --autogenerate -m "Brief description of changes"
+    ```
+4.  **Always review** the generated file in `alembic/versions/` before applying.
 
-Для первоначальной настройки базы данных (создания всех таблиц с нуля) используется Alembic. **Убедитесь, что ваш сервер PostgreSQL запущен.**
+## 4. Running the Application
 
-Из директории `Ego_AI/backend/` выполните:
+### Development Mode
 
-```bash
-alembic upgrade head
-```
-Эта команда применит все существующие миграции и создаст полную структуру таблиц. **Использовать `init_db.py` больше не нужно.**
+Perfect for writing code. Uses hot reload and less strict security settings for convenience.
 
-### Создание миграций
-
-После изменения моделей SQLAlchemy (`app/database/models/models.py`) сгенерируйте новый скрипт миграции:
-
-```bash
-alembic revision --autogenerate -m "Краткое описание изменений"
-```
-**Всегда просматривайте сгенерированный файл** в `alembic/versions/` перед применением.
-
-### Применение миграций
-
-Чтобы применить новые миграции к уже существующей базе данных, используйте ту же команду:
-
-```bash
-alembic upgrade head
-```
-
-### Откат миграций
-
-```bash
-alembic downgrade -1 # Откатить на одну ревизию назад
-```
-
-## 4. Запуск приложения
-
-После настройки переменных среды и базы данных вы можете запустить бэкенд-сервер.
-
-Из директории `Ego_AI/backend/` выполните:
-
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-*   `main:app`: Указывает Uvicorn запустить объект `app` из `main.py`.
-*   `--reload`: Сервер будет автоматически перезагружаться при обнаружении изменений в коде.
-*   `--host 0.0.0.0`: Делает сервер доступным извне, что полезно для Docker или для доступа с других устройств.
-*   `--port 8000`: Запускает сервер на порту 8000.
-
-Сервер будет доступен по адресу `http://localhost:8000`.
-
-## 5. Тестирование API (ручное)
-
-### Swagger UI
-
-FastAPI автоматически генерирует интерактивную документацию API.
-
-Откройте в браузере: `http://localhost:8000/api/docs`
-
-Здесь вы можете просматривать все доступные конечные точки, их параметры, ответы и тестировать их напрямую.
-
-### Инструменты для API
-
-Вы можете использовать такие инструменты, как [Postman](https://www.postman.com/downloads/) или [Insomnia](https://insomnia.rest/download), или утилиту `curl` для отправки HTTP-запросов к вашим конечным точкам.
-
-**Пример создания пользователя (POST):**
-
-*   **URL**: `http://localhost:8000/api/users/`
-*   **Метод**: `POST`
-*   **Headers**: `Content-Type: application/json`
-*   **Body (JSON)**:
-    ```json
-    {
-        "email": "test@example.com",
-        "password": "strongpassword123",
-        "name": "Test User"
-    }
+1.  In `.env` set `ENVIRONMENT="development"`.
+2.  Start the server:
+    ```bash
+    uvicorn main:app --reload --host 0.0.0.0 --port 8000
     ```
 
-**Пример получения пользователя (GET, требуется аутентификация):**
+### Production Mode (Local)
 
-Для конечных точек, требующих аутентификации (например, через `get_current_user`), вам нужно будет получить JWT-токен (например, после успешной аутентификации через Google OAuth) и включить его в заголовок `Authorization`.
+Used for testing the application in a configuration closest to real (no reload, full security).
 
-*   **URL**: `http://localhost:8000/api/users/{user_id}`
-*   **Метод**: `GET`
-*   **Headers**:
+1.  In `.env` set `ENVIRONMENT="production"`.
+2.  Start the server:
+    ```bash
+    uvicorn main:app --host 0.0.0.0 --port 8000
     ```
-    Authorization: Bearer <ВАШ_JWT_ТОКЕН>
+
+## 5. Frontend Integration
+
+The backend is fully ready for integration with client applications. The Google authentication process and API interaction examples for the frontend team are detailed in a separate guide.
+
+**See [Frontend Integration Guide](./FRONTEND_INTEGRATION.md)**
+
+## 6. API Testing (Manual)
+
+Interactive API documentation is available at `http://localhost:8000/docs` after starting the server. Here you can view all endpoints and test them directly.
+
+## 7. Automated Tests (Pytest)
+
+The project contains a set of integration tests.
+
+*   **Run all tests:**
+    ```bash
+    pytest
     ```
-
-## 6. Запуск тестов и анализ покрытия
-
-Проект содержит обширный набор интеграционных тестов с использованием `pytest`. Тесты используют отдельную базу данных для обеспечения изоляции.
-
-### Настройка тестовой среды
-
-Тесты настроены так, чтобы автоматически использовать тестовую базу данных (`egoai_test`). Никаких дополнительных настроек не требуется.
-
-### Запуск тестов
-
-Для запуска всего набора тестов выполните из директории `Ego_AI/backend/`:
-
-```bash
-pytest
-```
-
-### Анализ покрытия кода
-
-Мы используем `coverage.py` для анализа того, какая часть кода покрыта тестами.
-
-1.  **Запуск тестов с анализом покрытия:**
+*   **Run with code coverage analysis:**
     ```bash
     coverage run -m pytest
-    ```
-
-2.  **Просмотр отчета в консоли:**
-    ```bash
     coverage report -m
     ```
-    Эта команда покажет краткий отчет о покрытии для каждого файла и общее покрытие.
-
-3.  **Создание интерактивного HTML-отчета:**
+*   **Create interactive HTML coverage report:**
     ```bash
     coverage html
     ```
-    Эта команда создаст папку `htmlcov/`. Откройте файл `htmlcov/index.html` в браузере, чтобы увидеть подробный отчет, подсвечивающий выполненные и пропущенные строки кода.
+    (Report will be in `htmlcov/` folder)
 
-## 7. Структура проекта
+## 8. Project Structure
 
 ```
 Ego_AI/
 └── backend/
-    ├── alembic/            # Файлы конфигурации и скрипты миграции Alembic
+    ├── alembic/            # Alembic configuration files and migration scripts
     ├── app/
     │   ├── api/
-    │   │   ├── endpoints/  # API-конечные точки (маршруты), вызывают сервисы
-    │   │   └── router.py   # Главный маршрутизатор API
-    │   ├── auth/           # Модули для аутентификации (Google OAuth, JWT)
-    │   ├── core/           # Базовые конфигурации (настройки, исключения, логирование)
+    │   │   ├── endpoints/  # API endpoints (routes), call services
+    │   │   └── router.py   # Main API router
+    │   ├── auth/           # Authentication modules (Google OAuth, JWT)
+    │   ├── core/           # Core configurations (settings, exceptions, logging)
     │   ├── database/
-    │   │   ├── models/     # Определения моделей SQLAlchemy
-    │   │   ├── schemas/    # Схемы Pydantic для валидации данных
-    │   │   └── session.py  # Конфигурация сессий базы данных
-    │   ├── services/       # Слой бизнес-логики. Инкапсулирует всю логику работы с данными.
-    │   └── utils/          # Вспомогательные утилиты (зависимости, хеширование)
-    ├── docs/               # Документация по проекту
-    ├── tests/              # Интеграционные тесты (pytest)
-    ├── .coveragerc         # Конфигурация для анализа покрытия кода
-    ├── alembic.ini         # Главный конфигурационный файл Alembic
-    ├── Dockerfile          # Dockerfile для бэкенда
-    ├── main.py             # Главный файл приложения FastAPI
-    └── requirements.txt    # Зависимости Python
+    │   │   ├── crud/       # CRUD operations (low-level DB access)
+    │   │   ├── models/     # SQLAlchemy model definitions
+    │   │   ├── schemas/    # Pydantic schemas for data validation
+    │   │   └── session.py  # Database session configuration
+    │   ├── services/       # Business logic layer. Encapsulates all data handling logic.
+    │   └── utils/          # Helper utilities (dependencies, etc.)
+    ├── docs/               # Project documentation
+    ├── tests/              # Integration tests (pytest)
+    ├── .coveragerc         # Code coverage configuration
+    ├── alembic.ini         # Main Alembic configuration file
+    ├── Dockerfile          # Backend Dockerfile
+    ├── main.py            # FastAPI application main file
+    └── requirements.txt    # Python dependencies
 ```
 
-## 8. Развертывание (Docker)
+## 9. Running in Docker
 
-Для развертывания проекта в Docker Compose перейдите в корневую директорию проекта (`Ego_AI/`) и выполните:
+To run the entire stack (backend, frontend, PostgreSQL) in Docker Compose, go to the project root directory (`Ego_AI/`) and execute:
 
 ```bash
 docker-compose up --build -d
 ```
-Это соберет образы Docker для бэкенда, фронтенда и PostgreSQL, а затем запустит их в фоновом режиме.
-
-Доступ к бэкенду будет осуществляться через порт, указанный в `docker-compose.yml`.
+This is the most reliable and recommended way to run the application in an environment identical to production.
 
 --- 
