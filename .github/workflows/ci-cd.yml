@@ -1,0 +1,39 @@
+name: Ego_AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build containers
+        run: docker-compose build
+
+      - name: Backend Tests
+        run: docker-compose run --rm backend pytest
+
+      - name: Frontend Tests
+        run: docker-compose run --rm frontend npm test
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Remote Server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd ~/Ego_AI
+            git pull origin main
+            docker-compose down
+            docker-compose pull
+            docker-compose up -d --build
