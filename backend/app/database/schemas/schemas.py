@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, UUID4
 from typing import Optional, Dict, Any
 from datetime import datetime
 
-# User schemas
+
 class UserBase(BaseModel):
     email: EmailStr
     name: str
@@ -23,7 +23,7 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
-# Event schemas
+
 class EventBase(BaseModel):
     title: str
     description: Optional[str] = None
@@ -52,7 +52,7 @@ class Event(EventBase):
     class Config:
         from_attributes = True
 
-# Reminder schemas
+
 class ReminderBase(BaseModel):
     remind_at: datetime
     method: str
@@ -71,7 +71,7 @@ class Reminder(ReminderBase):
     class Config:
         from_attributes = True
 
-# AI Interaction schemas
+
 class AI_InteractionBase(BaseModel):
     input_text: str
     intent: Optional[str] = None
@@ -89,7 +89,7 @@ class AI_Interaction(AI_InteractionBase):
     class Config:
         from_attributes = True
 
-# User Settings schemas
+
 class User_SettingsBase(BaseModel):
     timezone: str
     language: str
@@ -108,4 +108,12 @@ class User_Settings(User_SettingsBase):
     updated_at: Optional[datetime] = None
 
     class Config:
-        from_attributes = True 
+        from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    user_id: Optional[str] = None 

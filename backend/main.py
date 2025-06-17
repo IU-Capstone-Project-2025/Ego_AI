@@ -1,23 +1,37 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import router
+from starlette.middleware.sessions import SessionMiddleware
 
-# Create Fast API app
-app = FastAPI(title="Ego AI Calendar API")
+from app.core import settings
+from app.core.logging import logger
+from app.api import api_router
+from app.core.exception_handlers import add_exception_handlers
 
-# Configure CORS
+# Alembic теперь управляет созданием таблиц, поэтому эта строка не нужна
+# from app.database import Base, engine 
+# Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME
+)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY,
+)
+
+add_exception_handlers(app)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include routers
-app.include_router(router, prefix="/api/v1")
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
-# Function to answer for request
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to Ego AI Calendar API"}
+@app.on_event("startup")
+async def on_startup():
+    logger.info(f"Starting {settings.PROJECT_NAME}")
