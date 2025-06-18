@@ -1,11 +1,6 @@
 #!/bin/bash
 set -e
 
-# Load .env if present
-if [ -f /app/.env ]; then
-  export $(grep -v '^#' /app/.env | xargs)
-fi
-
 # Wait for Postgres
 echo "Waiting for PostgreSQL at $DATABASE_URL..."
 until python - <<EOF

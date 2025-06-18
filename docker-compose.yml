@@ -32,7 +32,7 @@ services:
     networks:
       - ego-ai-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/hello-world"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
       interval: 30s
       timeout: 10s
       retries: 3
