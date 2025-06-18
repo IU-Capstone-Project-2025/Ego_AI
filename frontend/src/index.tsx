@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { General } from "./screens/General/General";
 import OtherPage from "./screens/OtherPage";
+import "./index.css";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
