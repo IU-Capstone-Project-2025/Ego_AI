@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "src/screens/General/General.tsx",
+      "label": "General",
+      "routes": [
+        "/"
+      ],
+      "isRoot": true
+    },
+    {
+      "id": "src/screens/OtherPage.tsx",
+      "label": "OtherPage",
+      "routes": [
+        "/other"
+      ]
+    }
+  ],
+  "edges": []
+}
