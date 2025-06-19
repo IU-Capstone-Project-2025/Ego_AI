@@ -53,7 +53,7 @@ class GroqChat:
 
 def initialize_model():
     # api_key
-    groq_api_key = "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"
+    groq_api_key = "key"
     groq = GroqChat("llama3-70b-8192", groq_api_key)
     model_voice = whisper.load_model("tiny")
     return groq, model_voice
