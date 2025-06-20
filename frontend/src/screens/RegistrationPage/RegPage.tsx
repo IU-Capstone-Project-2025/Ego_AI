@@ -13,7 +13,10 @@ export const RegPage = () => {
           <span className="ai">AI</span>
         </h2>
         <div className="regpage-buttons">
-          <button className="google-btn">
+          <button 
+            className="google-btn"
+            onClick={() => window.location.href = "/calendar"}
+          >
             <img
               src={gLogo}
               alt="Sign In"
@@ -22,7 +25,10 @@ export const RegPage = () => {
             />
             Sign In with Google
           </button>
-          <button className="google-btn">
+          <button 
+            className="google-btn"
+            onClick={() => window.location.href = "/calendar"}
+          >
             <img
               src={gLogo}
               alt="Sign Up"
