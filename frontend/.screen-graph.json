@@ -9,6 +9,13 @@
       "isRoot": true
     },
     {
+      "id": "src/screens/RegistrationPage/RegPage.tsx",
+      "label": "RegPage",
+      "routes": [
+        "/reg-page"
+      ]
+    },
+    {
       "id": "src/screens/OtherPage.tsx",
       "label": "OtherPage",
       "routes": [
