@@ -1,23 +1,25 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./RegPage.css";
 import gLogo from "./res/gLogo.png";
 
 const handleGoogleLogin = () => {
-  window.location.href = "http://localhost:8000/api/v1/auth/google-login"
+  // Use environment variable for API URL, fallback to localhost for development
+  const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+  window.location.href = `${apiUrl}/api/v1/auth/google-login`;
 };
 
 export const RegPage = () => {
-  // Handle Google OAuth callback
+  const navigate = useNavigate();
+  
+  // Check if user is already authenticated
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const token = localStorage.getItem("access_token");
     if (token) {
-      // Store token (localStorage or cookie)
-      localStorage.setItem("access_token", token);
-      // Redirect to main app page (change path as needed)
-      window.location.href = "/calendar";
+      // User is already logged in, redirect to calendar
+      navigate("/calendar", { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="regpage-container">
@@ -38,7 +40,7 @@ export const RegPage = () => {
               alt="Sign In"
               className="google-icon"
               style={{ width: 32, height: 32, marginRight: 12 }}
-            />
+            />{" "}
             Sign In with Google
           </button>
           <button 
@@ -50,7 +52,7 @@ export const RegPage = () => {
               alt="Sign Up"
               className="google-icon"
               style={{ width: 32, height: 32, marginRight: 12 }}
-            />
+            />{" "}
             Sign Up with Google
           </button>
         </div>
