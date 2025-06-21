@@ -43,9 +43,9 @@ Ego AI will become an indispensable tool in your life.
 
 **using ready server**
 
-1. User interface
+1. Try Ego AI
 
-http://185.207.133.14:3000/
+http://egoai.duckdns.org/
 
 2. API documentation
 
