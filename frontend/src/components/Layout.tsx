@@ -20,7 +20,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="layout">
       <nav className="nav">
         <div className="nav-links">
-          <Link to="/calendar" className="nav-link">Calendar</Link>
+          <Link to="/calendar" className="nav-link">Calendar</Link> {/* Fill with links to pages */}
+          <Link to="" className="nav-link">Dashboard/Analytics</Link> 
+          <Link to="" className="nav-link">Chat with AI</Link>
+          <Link to="" className="nav-link">Recomendations</Link>
+          <Link to="" className='nav-link'>GEO-ASSISTANT</Link>
         </div>
         <button onClick={handleLogout} className="logout-btn">
           Logout

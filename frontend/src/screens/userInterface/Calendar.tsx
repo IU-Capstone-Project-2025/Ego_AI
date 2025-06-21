@@ -41,6 +41,13 @@ export const Calendar: React.FC = () => {
   // State management
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [weeklyHours, setWeeklyHours] = useState({
+    focus: 0,
+    tasks: 0,
+    target: 0,
+    other: 0,
+    free: 119
+  });
   const [isGoogleApiLoaded, setIsGoogleApiLoaded] = useState(false);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [gapi, setGapi] = useState<any>(null);
@@ -67,7 +74,7 @@ export const Calendar: React.FC = () => {
   };
 
   // Calculate hours for each task type in the current week
-  const calculateWeeklyHours = () => {
+  const calculateWeeklyHours = useCallback(() => {
     const weekStart = startOfWeek(currentDate);
     const weekEnd = addDays(weekStart, 6);
     
@@ -75,6 +82,14 @@ export const Calendar: React.FC = () => {
     const weekEvents = events.filter(event => {
       const eventDate = new Date(event.start);
       return eventDate >= weekStart && eventDate <= weekEnd;
+    });
+
+    console.log('📊 Calculating weekly hours:', {
+      weekStart: weekStart.toISOString(),
+      weekEnd: weekEnd.toISOString(),
+      totalEvents: events.length,
+      weekEvents: weekEvents.length,
+      events: weekEvents.map(e => ({ title: e.title, type: e.type, start: e.start, end: e.end }))
     });
 
     // Calculate total hours for each type
@@ -87,6 +102,7 @@ export const Calendar: React.FC = () => {
 
     weekEvents.forEach(event => {
       const duration = (event.end.getTime() - event.start.getTime()) / (1000 * 60 * 60); // Convert to hours
+      console.log(`Adding ${duration}h for ${event.type}: ${event.title}`);
       hours[event.type] += duration;
     });
 
@@ -96,11 +112,14 @@ export const Calendar: React.FC = () => {
     const workingHours = 7 * 17; // Assuming 17 working hours per day (6am-11pm)
     const freeHours = workingHours - totalWorkHours;
 
-    return {
+    const result = {
       ...hours,
       free: Math.max(0, freeHours)
     };
-  };
+
+    console.log('📈 Weekly hours calculated:', result);
+    return result;
+  }, [currentDate, events]);
 
 
 
@@ -110,10 +129,24 @@ export const Calendar: React.FC = () => {
     const events: CalendarEvent[] = [
       {
         id: 'sample-1',
-        title: 'Week-Start-Test',
-        start: new Date(addDays(weekStart, 0).setHours(6, 0, 0, 0)), // Monday 8 AM
-        end: new Date(addDays(weekStart, 0).setHours(13, 0, 0, 0)), // Monday 9 AM
+        title: 'Morning Focus',
+        start: new Date(addDays(weekStart, 0).setHours(9, 0, 0, 0)), // Monday 9 AM
+        end: new Date(addDays(weekStart, 0).setHours(11, 0, 0, 0)), // Monday 11 AM
+        type: 'focus' as const
+      },
+      {
+        id: 'sample-2',
+        title: 'Task Review',
+        start: new Date(addDays(weekStart, 1).setHours(14, 0, 0, 0)), // Tuesday 2 PM
+        end: new Date(addDays(weekStart, 1).setHours(15, 30, 0, 0)), // Tuesday 3:30 PM
         type: 'tasks' as const
+      },
+      {
+        id: 'sample-3',
+        title: 'Target Work',
+        start: new Date(addDays(weekStart, 2).setHours(10, 0, 0, 0)), // Wednesday 10 AM
+        end: new Date(addDays(weekStart, 2).setHours(12, 0, 0, 0)), // Wednesday 12 PM
+        type: 'target' as const
       }
     ];
     return events;
@@ -127,7 +160,7 @@ export const Calendar: React.FC = () => {
     
     if (!gapi || !isSignedIn || !accessToken) {
       // If not connected to Google Calendar, just show sample events
-      setEvents(currentSampleEvents);
+      setEvents(currentSampleEvents.length > 0 ? currentSampleEvents : []);
       return;
     }
 
@@ -183,7 +216,7 @@ export const Calendar: React.FC = () => {
     } catch (error) {
       console.error('❌ Error loading calendar events:', error);
       // On error, still show sample events
-      setEvents(currentSampleEvents);
+      setEvents(currentSampleEvents.length > 0 ? currentSampleEvents : []);
     }
   }, [currentDate, gapi, isSignedIn, accessToken]);
 
@@ -289,12 +322,18 @@ export const Calendar: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update events when currentDate changes and user is signed in
+  // Update events when currentDate changes and user is signedIn
   useEffect(() => {
     loadCalendarEvents();
     // Also update the task form date to match the current viewing week
     updateTaskFormDate();
   }, [currentDate, loadCalendarEvents]);
+
+  // Update weekly hours when events or currentDate changes
+  useEffect(() => {
+    const updatedHours = calculateWeeklyHours();
+    setWeeklyHours(updatedHours);
+  }, [calculateWeeklyHours]);
 
   // Sign in to Google using new Identity Services
   const handleSignIn = async () => {
@@ -522,7 +561,9 @@ export const Calendar: React.FC = () => {
           {/* Legend */}
           <div className="calendar-legend">
             {(() => {
-              const weeklyHours = calculateWeeklyHours();
+              if (Object.values(weeklyHours).every(value => value === 0)) {
+                return <span>No events found for this week.</span>;
+              }
               return (
                 <>
                   <div className="legend-item">
@@ -754,4 +795,4 @@ export const Calendar: React.FC = () => {
   );
 };
 
-export default Calendar; 
+export default Calendar;
