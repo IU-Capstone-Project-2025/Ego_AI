@@ -95,5 +95,7 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
     
     jwt_token = create_access_token(data={"sub": str(user.id)})
 
+    # For debugging - you can temporarily change this to test-callback
     redirect_url = f"{settings.FRONTEND_URL}/login/callback?token={jwt_token}"
+    # redirect_url = f"{settings.FRONTEND_URL}/test-callback?token={jwt_token}"  # Debug route
     return RedirectResponse(url=redirect_url) 

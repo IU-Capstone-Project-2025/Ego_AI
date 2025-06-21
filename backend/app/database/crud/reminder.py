@@ -14,7 +14,7 @@ async def get_reminders_by_event(db: AsyncSession, event_id: str) -> List[Remind
     return list(result.scalars().all())
 
 async def get_upcoming_reminders(
-    db: AsyncSession, 
+    db: AsyncSession,
     start_time: datetime, 
     end_time: datetime
 ) -> List[Reminder]:

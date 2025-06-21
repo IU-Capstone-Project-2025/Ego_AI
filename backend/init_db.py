@@ -1,13 +1,17 @@
 import asyncio
+import logging
 
 from app.database.session import engine
 from app.database.base import Base
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("db.init")
+
 async def init_db():
-    print("Creating database tables...")
+    logger.info("[DB] Connecting to database and creating tables...")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    print("Database tables created successfully!")
+    logger.info("[DB] Database tables created successfully!")
 
 if __name__ == "__main__":
-    asyncio.run(init_db()) 
+    asyncio.run(init_db())

@@ -15,6 +15,13 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  justify-content: space-between;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .nav-link {
@@ -43,7 +50,27 @@
   font-weight: 600;
 }
 
+.logout-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 .main-content {
   flex: 1;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-} 
+}
