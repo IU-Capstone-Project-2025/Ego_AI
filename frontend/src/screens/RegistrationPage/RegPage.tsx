@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./RegPage.css";
 import gLogo from "./res/gLogo.png";
 
+const handleGoogleLogin = () => {
+  window.location.href = "http://localhost:8000/api/v1/auth/google-login"
+};
+
 export const RegPage = () => {
+  // Handle Google OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    if (token) {
+      // Store token (localStorage or cookie)
+      localStorage.setItem("access_token", token);
+      // Redirect to main app page (change path as needed)
+      window.location.href = "/calendar";
+    }
+  }, []);
+
   return (
     <div className="regpage-container">
       <div className="regpage-content">
@@ -15,7 +31,7 @@ export const RegPage = () => {
         <div className="regpage-buttons">
           <button 
             className="google-btn"
-            onClick={() => window.location.href = "/calendar"}
+            onClick={handleGoogleLogin}
           >
             <img
               src={gLogo}
@@ -27,7 +43,7 @@ export const RegPage = () => {
           </button>
           <button 
             className="google-btn"
-            onClick={() => window.location.href = "/calendar"}
+            onClick={handleGoogleLogin}
           >
             <img
               src={gLogo}
