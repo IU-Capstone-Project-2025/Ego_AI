@@ -7,6 +7,7 @@ from app.api.endpoints.v1 import (
     ai_interaction,
     user_settings,
     calendar,
+
 )
 
 api_router = APIRouter()

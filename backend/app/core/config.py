@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     
     FRONTEND_URL: str = "http://localhost:3000"
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    BACKEND_CORS_ORIGINS: str = "http://localhost:3000"
     
     GOOGLE_CLIENT_ID: Optional[str] = None
     GOOGLE_CLIENT_SECRET: Optional[str] = None
@@ -25,6 +25,13 @@ class Settings(BaseSettings):
     DATABASE_URL: PostgresDsn
 
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra='ignore')
+
+    @property
+    def backend_cors_origins_list(self) -> List[str]:
+        if self.BACKEND_CORS_ORIGINS.startswith("["):
+            import json
+            return json.loads(self.BACKEND_CORS_ORIGINS)
+        return [self.BACKEND_CORS_ORIGINS]
 
 
 settings = Settings()
