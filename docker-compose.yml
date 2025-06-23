@@ -1,69 +1,67 @@
-name: Ego_AI CI/CD Pipeline
+version: '3.8'
 
-on:
-  push:
-    branches: [main]
+services:
+  db:
+    image: postgres:16
+    container_name: ego-ai-db
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ego-ai-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: ego-ai-pgadmin
+    ports:
+      - "5050:80"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - ego-ai-network
 
-      - name: Build containers
-        run: docker-compose build
+  backend:
+    build: ./backend
+    container_name: ego-ai-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./backend/.env
+    networks:
+      - ego-ai-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-      - name: Backend Tests
-        run: docker-compose run --rm backend pytest
+  frontend:
+    build: ./frontend
+    container_name: ego-ai-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - ego-ai-network
 
-      - name: Frontend Tests
-        run: docker-compose run --rm frontend npm run test -- --watchAll=false || echo "No frontend tests yet"
+volumes:
+  postgres_data:
 
-  deploy:
-    needs: build-and-test
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to Remote Server via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            echo "Pulling latest code..."
-            cd ~/Ego_AI
-            git pull origin main
-
-            echo "Updating .env (project root)"
-            touch .env
-
-            update_env_var() {
-              VAR_NAME="$1"
-              VAR_VALUE="$2"
-              if grep -q "^$VAR_NAME=" .env; then
-                sed -i "s|^$VAR_NAME=.*|$VAR_NAME=$VAR_VALUE|" .env
-              else
-                echo "$VAR_NAME=$VAR_VALUE" >> .env
-              fi
-            }
-
-            update_env_var POSTGRES_USER "${{ secrets.DB_USER }}"
-            update_env_var POSTGRES_PASSWORD "${{ secrets.DB_PASSWORD }}"
-            update_env_var POSTGRES_DB "${{ secrets.DB_NAME }}"
-            update_env_var PGADMIN_DEFAULT_EMAIL "${{ secrets.PG_EMAIL }}"
-            update_env_var PGADMIN_DEFAULT_PASSWORD "${{ secrets.PG_PASSWORD }}"
-
-            echo "Updating backend/.env (for DATABASE_URL)"
-            mkdir -p backend
-            touch backend/.env
-            if grep -q "^DATABASE_URL=" backend/.env; then
-              sed -i "s|^DATABASE_URL=.*|DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@db:5432/${{ secrets.DB_NAME }}|" backend/.env
-            else
-              echo "DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@db:5432/${{ secrets.DB_NAME }}" >> backend/.env
-            fi
-
-            echo "Restarting Docker services..."
-            docker-compose down
-            docker-compose up -d --build
+networks:
+  ego-ai-network:
+    driver: bridge
