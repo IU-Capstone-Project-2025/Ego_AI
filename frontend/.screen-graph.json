@@ -1,0 +1,51 @@
+{
+  "nodes": [
+    {
+      "id": "src/screens/General/General.tsx",
+      "label": "General",
+      "routes": [
+        "/"
+      ],
+      "isRoot": true
+    },
+    {
+      "id": "src/screens/RegistrationPage/RegPage.tsx",
+      "label": "RegPage",
+      "routes": [
+        "/reg-page"
+      ]
+    },
+    {
+      "id": "src/screens/OtherPage.tsx",
+      "label": "OtherPage",
+      "routes": [
+        "/other"
+      ]
+    },
+    {
+      "id": "src/components/Layout.tsx",
+      "label": "Layout",
+      "routes": [
+        "/calendar"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "src/components/Layout.tsx:13:8-to-src/components/Layout.tsx",
+      "source": "src/components/Layout.tsx",
+      "target": "src/components/Layout.tsx",
+      "data": {
+        "viaRoute": "/calendar",
+        "trigger": {
+          "element": "<Link to=\"/calendar\" className=\"nav-link\">Calendar</Link>",
+          "line": 13,
+          "endLine": 13,
+          "column": 8,
+          "endColumn": 65,
+          "sourceFile": "src/components/Layout.tsx"
+        }
+      }
+    }
+  ]
+}

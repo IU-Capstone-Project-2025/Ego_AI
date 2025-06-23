@@ -1,19 +1,42 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
+import logging
 
-# Create Fast API app
-app = FastAPI()
+from app.core import settings
+from app.core.logging import logger
+from app.api import api_router
+from app.core.exception_handlers import add_exception_handlers
 
-# Add CORS middleware
+# Alembic теперь управляет созданием таблиц, поэтому эта строка не нужна
+# from app.database import Base, engine 
+# Base.metadata.create_all(bind=engine)
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("main")
+logger.info("[APP] FastAPI app is starting up...")
+
+app = FastAPI(
+    title=settings.PROJECT_NAME
+)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY,
+)
+
+add_exception_handlers(app)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.backend_cors_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Function to answer for request
-@app.get("/hello-world")
-async def get_hello_world():
-    return {"message": "Привет мир!"}
+app.include_router(api_router, prefix=settings.API_V1_STR)
+
+@app.on_event("startup")
+async def on_startup():
+    logger.info(f"Starting {settings.PROJECT_NAME}")

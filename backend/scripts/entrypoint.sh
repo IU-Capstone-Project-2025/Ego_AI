@@ -1,10 +1,5 @@
 #!/bin/bash
-set -e
-
-# Load .env if present
-if [ -f /app/.env ]; then
-  export $(grep -v '^#' /app/.env | xargs)
-fi
+set -ex
 
 # Wait for Postgres
 echo "Waiting for PostgreSQL at $DATABASE_URL..."
@@ -13,7 +8,12 @@ import os, sys
 from urllib.parse import urlparse
 import psycopg2
 url = os.getenv("DATABASE_URL")
+print(f"[DEBUG] DATABASE_URL: {url}")
+# Remove +asyncpg from the URL for psycopg2 compatibility
+url = url.replace("+asyncpg", "")
+print(f"[DEBUG] Cleaned URL for psycopg2: {url}")
 parts = urlparse(url)
+print(f"[DEBUG] Connecting with dbname={parts.path.lstrip('/')} user={parts.username} host={parts.hostname} port={parts.port}")
 conn = psycopg2.connect(
     dbname=parts.path.lstrip('/'),
     user=parts.username,
@@ -28,5 +28,9 @@ do
   sleep 1
 done
 
-echo "PostgreSQL is up — launching the app"
+ls -l /app
+echo "PostgreSQL is up — running Alembic migrations"
+cd /app
+alembic upgrade head
+echo "Database initialized — launching the app"
 exec "$@"

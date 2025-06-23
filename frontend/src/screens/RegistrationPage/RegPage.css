@@ -1,0 +1,113 @@
+.regpage-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;   /* Center vertically */
+  align-items: center;       /* Center horizontally */
+  background: linear-gradient(180deg, #f8f8f8 0%, #fff 100%);
+  position: relative;
+}
+
+.regpage-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150px;
+  background: linear-gradient(180deg, #b6f0e6 0%, #b76cf4 60%, rgba(255,255,255,0.85) 90%, rgba(255,255,255,0) 100%);
+  opacity: 0.15;
+  z-index: 1;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  pointer-events: none;
+  transition: background 0.3s, opacity 0.3s;
+}
+
+.regpage-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.regpage-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.regpage-logo {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.ego {
+  color: #b76cf4;
+}
+
+.colon {
+  color: #b76cf4;
+}
+
+.ai {
+  color: #4de6b1;
+}
+
+.regpage-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: #fff;
+  color: #4285F4;
+  box-shadow: 0 2px 8px rgba(66, 133, 244, 0.15);
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.google-btn:hover {
+  background: #f0f4fa;
+  color: #174ea6;
+}
+
+.google-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 12px;
+  background: none;
+}
+
+.regpage-footer {
+  margin: 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 2;
+}

@@ -1,0 +1,29 @@
+[run]
+branch = True
+source = app/
+
+[report]
+exclude_lines =
+    if TYPE_CHECKING:
+    ... # pragma: no cover
+    raise NotImplementedError
+    if __name__ == "__main__":
+    pass # pragma: no cover
+    # pragma: no cover
+
+omit =
+    alembic/*
+    docs/*
+    tests/*
+    main.py
+    app/__init__.py
+    app/api/__init__.py
+    app/api/endpoints/__init__.py
+    app/api/endpoints/v1/__init__.py
+    app/auth/__init__.py
+    app/core/__init__.py
+    app/database/__init__.py
+    app/database/crud/__init__.py
+    app/database/models/__init__.py
+    app/database/schemas/__init__.py
+    app/utils/__init__.py 
