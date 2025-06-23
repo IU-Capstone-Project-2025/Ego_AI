@@ -32,12 +32,8 @@ class EventBase(BaseModel):
     all_day: bool = False
     location: Optional[str] = None
 
-class EventCreate(BaseModel):
-    title: str
-    description: str = ""
-    start_time: datetime
-    end_time: datetime
-    location: Optional[str] = None  # <-- добавь это поле
+class EventCreate(EventBase):
+    pass
 
 class EventUpdate(BaseModel):
     title: Optional[str] = None
@@ -120,4 +116,4 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    user_id: Optional[str] = None
+    user_id: Optional[str] = None 
