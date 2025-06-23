@@ -47,15 +47,8 @@ class UserService:
             await self.db.rollback()
             raise DatabaseError(f"Error creating user: {str(e)}")
 
-    async def update(self, user_id: uuid.UUID, user_in: schemas.UserUpdate, current_user: models.User) -> models.User:
-        """Обновить пользователя с проверкой прав."""
-        if current_user.id != user_id:
-            raise ForbiddenError("You are not authorized to update this user.")
-
-        user = await self.get_by_id(user_id)
-        if not user:
-            raise NotFoundError(f"User with id {user_id} not found")
-            
+    async def _update(self, user: models.User, user_in: schemas.UserUpdate) -> models.User:
+        """Internal update method without permission checks."""
         try:
             update_data = user_in.model_dump(exclude_unset=True)
             if 'password' in update_data:
@@ -71,6 +64,17 @@ class UserService:
         except Exception as e:
             await self.db.rollback()
             raise DatabaseError(f"Error updating user: {str(e)}")
+
+    async def update(self, user_id: uuid.UUID, user_in: schemas.UserUpdate, current_user: models.User) -> models.User:
+        """Обновить пользователя с проверкой прав."""
+        if current_user.id != user_id:
+            raise ForbiddenError("You are not authorized to update this user.")
+
+        user = await self.get_by_id(user_id)
+        if not user:
+            raise NotFoundError(f"User with id {user_id} not found")
+            
+        return await self._update(user, user_in)
 
     async def delete(self, user_id: uuid.UUID, current_user: models.User) -> None:
         """Удалить пользователя с проверкой прав."""
