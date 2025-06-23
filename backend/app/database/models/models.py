@@ -24,7 +24,7 @@ class Event(Base):
     start_time = Column(DateTime(timezone=True), nullable=False)
     end_time = Column(DateTime(timezone=True), nullable=False)
     all_day = Column(Boolean, default=False)
-    location = Column(String)
+    location = Column(String, nullable=True)  # <-- добавь это поле
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -55,4 +55,4 @@ class User_Settings(Base):
     timezone = Column(String, nullable=False)
     language = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
