@@ -67,7 +67,7 @@ services:
     ports:
       - "8001:8001"
     env_file:
-      - ./ML/.env
+      - .env
     networks:
       - ego-ai-network
 
