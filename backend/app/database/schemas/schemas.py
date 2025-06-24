@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, UUID4
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
 
@@ -19,6 +19,15 @@ class User(UserBase):
     id: UUID4
     created_at: datetime
     updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class UserMe(BaseModel):
+    id: UUID4
+    name: str
+    email: EmailStr
 
     class Config:
         from_attributes = True
@@ -116,4 +125,12 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    user_id: Optional[str] = None 
+    user_id: Optional[str] = None
+
+
+class LLM_ChatRequest(BaseModel):
+    message: str
+
+
+class LLM_ChatResponse(BaseModel):
+    response: str

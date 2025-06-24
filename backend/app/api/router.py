@@ -6,6 +6,8 @@ from app.api.endpoints.v1 import (
     reminder,
     ai_interaction,
     user_settings,
+    calendar,
+    llm_chat,
     health,
 )
 
@@ -17,4 +19,6 @@ api_router.include_router(event.router, prefix="/events", tags=["events"])
 api_router.include_router(reminder.reminder_router, prefix="/reminders", tags=["reminders"])
 api_router.include_router(ai_interaction.ai_interaction_router, prefix="/ai", tags=["ai"])
 api_router.include_router(user_settings.user_settings_router, prefix="/settings", tags=["settings"])
+api_router.include_router(calendar.router, prefix="/calendar", tags=["calendar"])
+api_router.include_router(llm_chat.router, prefix="/llm_chat", tags=["llm_chat"])
 api_router.include_router(health.health_router, prefix="/health", tags=["health"])
