@@ -1,5 +1,4 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError
 import uuid
@@ -11,18 +10,19 @@ from app.auth.jwt import verify_token
 from app.core import settings
 
 
-oauth2_scheme = HTTPBearer()
-
 async def get_current_user(
-    db: AsyncSession = Depends(get_db), 
-    credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme)
+    request: Request,
+    db: AsyncSession = Depends(get_db)
 ) -> models.User:
-    token = credentials.credentials
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+    token = request.cookies.get("access_token")
+    if not token:
+        raise credentials_exception
 
     user_id_str = verify_token(token=token, credentials_exception=credentials_exception)
     

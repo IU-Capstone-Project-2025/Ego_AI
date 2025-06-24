@@ -5,6 +5,8 @@ from authlib.integrations.starlette_client import OAuth
 from starlette.requests import Request
 from typing import Dict
 import httpx
+from datetime import timedelta, datetime, timezone
+import json
 
 from ..database import get_db
 from ..database.schemas import UserCreate
@@ -24,28 +26,42 @@ oauth.register(
     client_kwargs={'scope': 'openid email profile'}
 )
 
-@router.get("/google-login")
+@router.get("/google")
 async def google_login(request: Request):
-    """
-    Генерирует редирект на страницу аутентификации Google.
-    """
     redirect_uri = settings.GOOGLE_REDIRECT_URI
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    redirect_to_frontend = request.query_params.get('redirect_to')
+
+    state_data = {
+        "redirect_to": redirect_to_frontend
+    }
+    state_param = json.dumps(state_data)
+
+    return await oauth.google.authorize_redirect(request, redirect_uri, state=state_param)
 
 
 @router.get("/google/callback")
 async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
+    user_info = None
+    redirect_to_frontend = None
+
+    state_param = request.query_params.get('state')
+    if state_param:
+        try:
+            state_data = json.loads(state_param)
+            redirect_to_frontend = state_data.get('redirect_to')
+        except json.JSONDecodeError:
+            pass
+
     if settings.ENVIRONMENT == "production":
         try:
             token = await oauth.google.authorize_access_token(request)
+            user_info = await oauth.google.parse_id_token(token)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Could not authorize access token: {e}",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        user_info = token.get('userinfo')
-
     else:
         code = request.query_params.get('code')
         if not code:
@@ -62,16 +78,18 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         async with httpx.AsyncClient() as client:
             token_response = await client.post(token_url, data=token_data)
             token_json = token_response.json()
-
+        
         access_token = token_json.get('access_token')
-        if not access_token:
-            raise HTTPException(status_code=400, detail=f"Dev mode: Failed to retrieve access token: {token_json}")
+        id_token_raw = token_json.get('id_token')
 
-        userinfo_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
-        headers = {'Authorization': f'Bearer {access_token}'}
-        async with httpx.AsyncClient() as client:
-            userinfo_response = await client.get(userinfo_url, headers=headers)
-            user_info = userinfo_response.json()
+        if not access_token or not id_token_raw:
+            raise HTTPException(status_code=400, detail=f"Dev mode: Failed to retrieve access_token or id_token: {token_json}")
+
+        import jwt as pyjwt
+        try:
+            user_info = pyjwt.decode(id_token_raw, options={"verify_signature": False})
+        except pyjwt.PyJWTError as e:
+            raise HTTPException(status_code=400, detail=f"Dev mode: Failed to decode id_token: {e}")
 
     if not user_info or not user_info.get('email'):
         raise HTTPException(
@@ -94,8 +112,41 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         user = await user_service.create(user_in=user_create)
     
     jwt_token = create_access_token(data={"sub": str(user.id)})
+    
+    expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expires = datetime.now(timezone.utc) + expires_delta
 
-    # For debugging - you can temporarily change this to test-callback
-    redirect_url = f"{settings.FRONTEND_URL}/login/callback?token={jwt_token}"
-    # redirect_url = f"{settings.FRONTEND_URL}/test-callback?token={jwt_token}"  # Debug route
-    return RedirectResponse(url=redirect_url) 
+    if redirect_to_frontend:
+        final_redirect_url = f"{settings.FRONTEND_URL}{redirect_to_frontend}"
+    else:
+        final_redirect_url = f"{settings.FRONTEND_URL}/login/callback" # Fallback to a default frontend callback if no specific redirect_to
+
+    response = RedirectResponse(url=final_redirect_url, status_code=status.HTTP_302_FOUND)
+    
+    response.set_cookie(
+        key="access_token",
+        value=jwt_token,
+        httponly=True,
+        secure=True if settings.ENVIRONMENT == "production" else False,
+        samesite="lax",
+        max_age=int(expires_delta.total_seconds()),
+        path="/",
+        domain=None
+    )
+    
+    return response
+
+@router.post("/logout", status_code=status.HTTP_200_OK)
+async def logout(response: Response):
+    
+    response.set_cookie(
+        key="access_token",
+        value="",
+        httponly=True,
+        secure=True if settings.ENVIRONMENT == "production" else False,
+        samesite="lax",
+        max_age=0,
+        path="/",
+        domain=None
+    )
+    return {"message": "Successfully logged out"}

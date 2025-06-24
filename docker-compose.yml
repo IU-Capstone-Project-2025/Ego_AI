@@ -3,27 +3,25 @@ services:
     image: postgres:16
     container_name: ego-ai-db
     restart: always
-    environment:
-      POSTGRES_USER: ego_user
-      POSTGRES_PASSWORD: ego_pass
-      POSTGRES_DB: ego_db
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - ego-ai-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ego_user -d ego_db"]  # Added -d parameter to specify database
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   pgadmin:
     image: dpage/pgadmin4
+    container_name: ego-ai-pgadmin
     ports:
       - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user@example.com
-      PGADMIN_DEFAULT_PASSWORD: secret
+    env_file:
+      - .env
     depends_on:
       - db
     networks:
@@ -51,11 +49,23 @@ services:
   frontend:
     build: ./frontend
     container_name: ego-ai-frontend
+    env_file:
+      - ./frontend/.env
     ports:
       - "3000:80"
     depends_on:
       backend:
         condition: service_healthy
+    networks:
+      - ego-ai-network
+
+  ml-service:
+    build: ./ML
+    container_name: ego-ai-ml-service
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./ML/.env
     networks:
       - ego-ai-network
 
