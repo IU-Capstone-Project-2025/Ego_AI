@@ -102,6 +102,7 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
     
     user_service = UserService(db)
     user = await user_service.get_by_email(email=user_email)
+    
 
     if not user:
         google_user_id = user_info.get('sub') or user_info.get('id')

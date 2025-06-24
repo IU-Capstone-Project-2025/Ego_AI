@@ -134,4 +134,3 @@ class LLM_ChatRequest(BaseModel):
 
 class LLM_ChatResponse(BaseModel):
     response: str
-    
