@@ -39,6 +39,7 @@ async def interpret_and_create_event(
     db: AsyncSession = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
+
     result = await db.execute(
         models.Event.__table__.select().where(models.Event.user_id == current_user.id)
     )
@@ -118,4 +119,3 @@ async def update_task(
     event_service = EventService(db)
     updated_event = await event_service.update(event_id, event_in, current_user)
     return updated_event
-
