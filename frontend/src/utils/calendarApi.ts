@@ -26,7 +26,8 @@ export async function createEvent(event: any) {
     start_time: event.start || event.start_time,
     end_time: event.end || event.end_time,
     all_day: event.all_day ?? false,
-    location: event.location ?? ""
+    location: event.location ?? "",
+    type: event.type
   };
   const res = await fetch(`${API_URL}/api/v1/calendar/set_task`, {
     method: "POST",
