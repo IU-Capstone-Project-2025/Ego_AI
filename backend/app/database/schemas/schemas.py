@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, UUID4
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
 
@@ -133,5 +133,5 @@ class LLM_ChatRequest(BaseModel):
 
 
 class LLM_ChatResponse(BaseModel):
-    response: str 
+    response: str
     

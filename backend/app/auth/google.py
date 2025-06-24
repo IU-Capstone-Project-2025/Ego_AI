@@ -116,7 +116,11 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
     expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     expires = datetime.now(timezone.utc) + expires_delta
 
-    final_redirect_url = redirect_to_frontend if redirect_to_frontend else f"{settings.FRONTEND_URL}"
+    if redirect_to_frontend:
+        final_redirect_url = f"{settings.FRONTEND_URL}{redirect_to_frontend}"
+    else:
+        final_redirect_url = f"{settings.FRONTEND_URL}/login/callback" # Fallback to a default frontend callback if no specific redirect_to
+
     response = RedirectResponse(url=final_redirect_url, status_code=status.HTTP_302_FOUND)
     
     response.set_cookie(
