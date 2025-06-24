@@ -4,7 +4,9 @@ from .schemas import (
     Reminder, ReminderCreate, ReminderUpdate,
     AI_Interaction, AI_InteractionCreate,
     User_Settings, User_SettingsCreate, User_SettingsUpdate,
-    Token, TokenData
+    Token, TokenData,
+    UserMe,
+    LLM_ChatRequest, LLM_ChatResponse
 )
 
 __all__ = [
@@ -13,5 +15,7 @@ __all__ = [
     "Reminder", "ReminderCreate", "ReminderUpdate",
     "AI_Interaction", "AI_InteractionCreate",
     "User_Settings", "User_SettingsCreate", "User_SettingsUpdate",
-    "Token", "TokenData"
+    "Token", "TokenData",
+    "UserMe",
+    "LLM_ChatRequest", "LLM_ChatResponse"
 ]

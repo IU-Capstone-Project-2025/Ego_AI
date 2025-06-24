@@ -61,6 +61,16 @@ services:
     networks:
       - ego-ai-network
 
+  ml-service:
+    build: ./ML
+    container_name: ego-ai-ml-service
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./ML/.env
+    networks:
+      - ego-ai-network
+
 volumes:
   postgres_data:
 

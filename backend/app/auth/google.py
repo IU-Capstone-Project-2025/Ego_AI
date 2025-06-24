@@ -82,7 +82,6 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         access_token = token_json.get('access_token')
         id_token_raw = token_json.get('id_token')
 
-
         if not access_token or not id_token_raw:
             raise HTTPException(status_code=400, detail=f"Dev mode: Failed to retrieve access_token or id_token: {token_json}")
 

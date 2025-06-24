@@ -109,7 +109,6 @@ async def get_tasks_by_time(
     events = await event_service.get_events_by_date_range(uuid.UUID(str(current_user.id)), time_range.start_time, time_range.end_time)
     return events
 
-
 @router.put("/update_task/{event_id}", response_model=schemas.Event)
 async def update_task(
     event_id: uuid.UUID,
