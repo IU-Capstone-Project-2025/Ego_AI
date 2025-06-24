@@ -10,6 +10,11 @@ import uvicorn
 import tempfile
 
 
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY environment variable not set")
+
+
 class Chat:
     def __init__(self, model_name, api_key):
         self.model = model_name
@@ -32,8 +37,7 @@ class Chat:
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content'].strip()
 
-
-model = Chat("llama3-70b-8192", "key")
+model = Chat("llama3-70b-8192", GROQ_API_KEY)
 model_voice = whisper.load_model("tiny")
 
 
@@ -48,7 +52,7 @@ def format_event(event):
 
 def build_system_prompt(calendar_data=None):
     today = datetime.datetime.now().strftime("%B %d, %Y")
-    calendar_context = "\n".join(format_event(e) for e in calendar_data)
+    calendar_context = "\n".join(format_event(e) for e in (calendar_data or []))
     content = (
         "You are a helpful assistant who answers questions about the user's calendar and gives general productivity tips. "
         "Only respond based on the provided calendar and general knowledge. "
@@ -63,6 +67,7 @@ app = FastAPI(title="ML Calendar Chat API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -90,7 +95,7 @@ def chat(req: ChatRequest):
         reply = model.chat(messages)
         return ChatResponse(response=reply)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"ML Service Error: {e}")
 
 
 @app.post("/voice", response_model=VoiceResponse)
@@ -110,7 +115,7 @@ def voice_chat(file: UploadFile = File(...)):
 
         return VoiceResponse(transcription=text, response=reply)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"ML Service Error: {e}")
     finally:
         if tmp_path and os.path.exists(tmp_path):
             os.remove(tmp_path)

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../components/Layout.css';
 import './Chat.css';
+import { chatWithML } from '@/utils/mlApi';
 
 interface Message {
   sender: 'user' | 'llm';
@@ -22,13 +23,19 @@ export const Chat: React.FC = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
 
-    // Имитация ответа LLM (заменить на реальный запрос к API)
-    setTimeout(() => {
+    try {
+      const result = await chatWithML(userMessage.text);
       setMessages((prev) => [
         ...prev,
-        { sender: 'llm', text: 'Это ответ LLM на: ' + userMessage.text },
+        { sender: 'llm', text: result.response || "No responce for LLM service."}
       ]);
-    }, 1000);
+    } catch (error) {
+      console.error('Error connecting to ML service:', error);
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'llm', text: 'Error not connect to ML service'}
+      ]);
+    }
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
