@@ -22,14 +22,24 @@ class Settings(BaseSettings):
     
     DATABASE_URL: PostgresDsn
 
+    GROQ_API_KEY: Optional[str] = None
+
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra='ignore')
 
     @property
     def backend_cors_origins_list(self) -> List[str]:
+        origins = []
         if self.BACKEND_CORS_ORIGINS.startswith("["):
             import json
-            return json.loads(self.BACKEND_CORS_ORIGINS)
-        return [self.BACKEND_CORS_ORIGINS]
+            origins = json.loads(self.BACKEND_CORS_ORIGINS)
+        else:
+            origins = [self.BACKEND_CORS_ORIGINS]
+        
+        # REMOVE THIS IN PRODUCTION!
+        if self.ENVIRONMENT == "development" and "null" not in origins:
+            origins.append("null")
+            
+        return origins
 
 
 settings = Settings()

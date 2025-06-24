@@ -10,7 +10,7 @@ from app.utils import deps
 
 router = APIRouter()
 
-@router.get("/me", response_model=schemas.User)
+@router.get("/me", response_model=schemas.UserMe)
 async def read_users_me(current_user: models.User = Depends(deps.get_current_user)):
     """
     Get current user.

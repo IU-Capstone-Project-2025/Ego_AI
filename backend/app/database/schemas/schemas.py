@@ -24,6 +24,15 @@ class User(UserBase):
         from_attributes = True
 
 
+class UserMe(BaseModel):
+    id: UUID4
+    name: str
+    email: EmailStr
+
+    class Config:
+        from_attributes = True
+
+
 class EventBase(BaseModel):
     title: str
     description: Optional[str] = None
@@ -116,4 +125,13 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    user_id: Optional[str] = None 
+    user_id: Optional[str] = None
+
+
+class LLM_ChatRequest(BaseModel):
+    message: str
+
+
+class LLM_ChatResponse(BaseModel):
+    response: str 
+    
