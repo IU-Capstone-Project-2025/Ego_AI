@@ -1,49 +1,59 @@
 {
   "nodes": [
     {
-      "id": "src/screens/General/General.tsx",
-      "label": "General",
+      "id": "src/screens/Root_page/Root_page.tsx",
+      "label": "Root_page",
       "routes": [
         "/"
       ],
       "isRoot": true
     },
     {
-      "id": "src/screens/RegistrationPage/RegPage.tsx",
-      "label": "RegPage",
+      "id": "src/screens/Auth/Auth.tsx",
+      "label": "Auth",
       "routes": [
-        "/reg-page"
+        "/auth"
       ]
     },
     {
-      "id": "src/screens/OtherPage.tsx",
-      "label": "OtherPage",
+      "id": "src/components/ProtectedRoute.tsx",
+      "label": "ProtectedRoute",
       "routes": [
-        "/other"
-      ]
-    },
-    {
-      "id": "src/components/Layout.tsx",
-      "label": "Layout",
-      "routes": [
-        "/calendar"
+        "/calendar",
+        "/chat"
       ]
     }
   ],
   "edges": [
     {
-      "id": "src/components/Layout.tsx:13:8-to-src/components/Layout.tsx",
-      "source": "src/components/Layout.tsx",
-      "target": "src/components/Layout.tsx",
+      "id": "src\\screens\\Auth\\Auth.tsx:18:6-to-src\\components\\ProtectedRoute.tsx",
+      "source": "src\\screens\\Auth\\Auth.tsx",
+      "target": "src\\components\\ProtectedRoute.tsx",
       "data": {
-        "viaRoute": "/calendar",
+        "viaRoute": "/chat",
         "trigger": {
-          "element": "<Link to=\"/calendar\" className=\"nav-link\">Calendar</Link>",
-          "line": 13,
-          "endLine": 13,
-          "column": 8,
-          "endColumn": 65,
-          "sourceFile": "src/components/Layout.tsx"
+          "element": "navigate('/chat')",
+          "line": 18,
+          "endLine": 18,
+          "column": 6,
+          "endColumn": 23,
+          "sourceFile": "src\\screens\\Auth\\Auth.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\ProtectedRoute.tsx:132:11-to-src\\screens\\Auth\\Auth.tsx",
+      "source": "src\\components\\ProtectedRoute.tsx",
+      "target": "src\\screens\\Auth\\Auth.tsx",
+      "data": {
+        "viaRoute": "/auth",
+        "trigger": {
+          "element": "<Navigate to=\"/auth\" state={{ from: location }} replace />",
+          "line": 132,
+          "endLine": 132,
+          "column": 11,
+          "endColumn": 69,
+          "sourceFile": "src\\components\\ProtectedRoute.tsx"
         }
       }
     }

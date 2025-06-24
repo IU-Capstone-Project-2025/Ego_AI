@@ -1,25 +1,29 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { General } from "./screens/General/General";
-import { Calendar } from "./screens/userInterface/Calendar";
-import OtherPage from "./screens/OtherPage";
-import { RegPage } from "./screens/RegistrationPage/RegPage";
-import { LoginCallback } from "./screens/LoginCallback";
-import { TestCallback } from "./screens/TestCallback/TestCallback";
-import { ProtectedRoute } from "./components/ProtectedRoute";
-import "./index.css";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import './index.css';
 import { Layout } from './components/Layout';
+import { Chat } from './screens/Chat/Chat';
+import { Calendar } from './screens/Calendar/Calendar';
+import { Auth } from './screens/Auth/Auth';
+import { AuthCallback } from './screens/Auth/AuthCallback';
+import { Root_page } from './screens/Root_page/Root_page';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
-createRoot(document.getElementById("app") as HTMLElement).render(
-  <StrictMode>
+const App: React.FC = () => {
+  return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<General />} />
-        <Route path="/reg-page" element={<RegPage />} />
-        <Route path="/login/callback" element={<LoginCallback />} />
-        <Route path="/test-callback" element={<TestCallback />} />
-        <Route path="/other" element={<OtherPage />} />
+        <Route path="/" element={<Root_page />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/chat" element={
+          <ProtectedRoute>
+            <Layout>
+              <Chat />
+            </Layout>
+          </ProtectedRoute>
+        } />
         <Route path="/calendar" element={
           <ProtectedRoute>
             <Layout>
@@ -27,7 +31,18 @@ createRoot(document.getElementById("app") as HTMLElement).render(
             </Layout>
           </ProtectedRoute>
         } />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
-  </StrictMode>,
+  );
+};
+
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 );

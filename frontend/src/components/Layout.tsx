@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
 import './Layout.css';
 
 interface LayoutProps {
@@ -8,11 +7,9 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { signOut } = useAuth();
   const navigate = useNavigate();
   
   const handleLogout = () => {
-    signOut();
     navigate("/reg-page", { replace: true });
   };
   
@@ -21,8 +18,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <nav className="nav">
         <div className="nav-links">
           <Link to="/calendar" className="nav-link">Calendar</Link> {/* Fill with links to pages */}
+          <Link to="/chat" className="nav-link">Chat with AI</Link>
           <Link to="" className="nav-link">Dashboard/Analytics</Link> 
-          <Link to="" className="nav-link">Chat with AI</Link>
           <Link to="" className="nav-link">Recomendations</Link>
           <Link to="" className='nav-link'>GEO-ASSISTANT</Link>
         </div>

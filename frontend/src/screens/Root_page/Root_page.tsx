@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import Footer from "../../components/ui/footer";
 
-export const General = (): JSX.Element => {
+export const Root_page = (): JSX.Element => {
   const navItems = [
     "НАШИ ПРОДУКТЫ",
     "О ПРОЕКТЕ",
@@ -159,7 +159,7 @@ export const General = (): JSX.Element => {
 
           <Button
             className="w-[300px] h-[50px] bg-[#66d6b8] rounded-[10px] hover:bg-[#5ac1a6] transition-colors"
-            onClick={() => window.location.href = "/reg-page"}
+            onClick={() => window.location.href = "/calendar"}
           >
             <span className="[font-family:'Manrope',Helvetica] font-bold text-[#232323] text-xs text-center tracking-[0.24px] leading-3 whitespace-nowrap">
               НАЧАТЬ ИСПОЛЬЗОВАТЬ
