@@ -1,0 +1,61 @@
+{
+  "nodes": [
+    {
+      "id": "src/screens/Root_page/Root_page.tsx",
+      "label": "Root_page",
+      "routes": [
+        "/"
+      ],
+      "isRoot": true
+    },
+    {
+      "id": "src/screens/Auth/Auth.tsx",
+      "label": "Auth",
+      "routes": [
+        "/auth"
+      ]
+    },
+    {
+      "id": "src/components/ProtectedRoute.tsx",
+      "label": "ProtectedRoute",
+      "routes": [
+        "/calendar",
+        "/chat"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "src\\screens\\Auth\\Auth.tsx:18:6-to-src\\components\\ProtectedRoute.tsx",
+      "source": "src\\screens\\Auth\\Auth.tsx",
+      "target": "src\\components\\ProtectedRoute.tsx",
+      "data": {
+        "viaRoute": "/chat",
+        "trigger": {
+          "element": "navigate('/chat')",
+          "line": 18,
+          "endLine": 18,
+          "column": 6,
+          "endColumn": 23,
+          "sourceFile": "src\\screens\\Auth\\Auth.tsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\ProtectedRoute.tsx:132:11-to-src\\screens\\Auth\\Auth.tsx",
+      "source": "src\\components\\ProtectedRoute.tsx",
+      "target": "src\\screens\\Auth\\Auth.tsx",
+      "data": {
+        "viaRoute": "/auth",
+        "trigger": {
+          "element": "<Navigate to=\"/auth\" state={{ from: location }} replace />",
+          "line": 132,
+          "endLine": 132,
+          "column": 11,
+          "endColumn": 69,
+          "sourceFile": "src\\components\\ProtectedRoute.tsx"
+        }
+      }
+    }
+  ]
+}
