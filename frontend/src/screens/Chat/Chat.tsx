@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import '../../components/Layout.css';
 import './Chat.css';
 import { chatWithML } from '@/utils/mlApi';
+import { createEvent } from '@/utils/calendarApi';
 
 interface Message {
   sender: 'user' | 'llm';
@@ -25,9 +26,23 @@ export const Chat: React.FC = () => {
 
     try {
       const result = await chatWithML(userMessage.text);
+      let llmText = result.response ?? "No responce for LLM service.";
+      // Try to parse as JSON for event creation
+      try {
+        const eventCandidate = JSON.parse(llmText);
+        if (eventCandidate && eventCandidate.title && eventCandidate.start_time && eventCandidate.end_time) {
+          // Patch type if missing or invalid
+          const validTypes = ['focus', 'tasks', 'target', 'other'];
+          if (!validTypes.includes(eventCandidate.type)) {
+            eventCandidate.type = 'other';
+          }
+          await createEvent(eventCandidate);
+          llmText = 'Задача успешно добавлена в календарь!';
+        }
+      } catch (e) { /* not a JSON, just a normal reply */ }
       setMessages((prev) => [
         ...prev,
-        { sender: 'llm', text: result.response || "No responce for LLM service."}
+        { sender: 'llm', text: llmText }
       ]);
     } catch (error) {
       console.error('Error connecting to ML service:', error);

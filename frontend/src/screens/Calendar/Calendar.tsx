@@ -62,7 +62,10 @@ export const Calendar: React.FC = () => {
     const hours = { focus: 0, tasks: 0, target: 0, other: 0 };
     weekEvents.forEach(event => {
       const duration = (new Date(event.end).getTime() - new Date(event.start).getTime()) / (1000 * 60 * 60);
-      hours[event.type] += duration;
+      // Patch: если тип невалидный, считаем как 'other'
+      const validTypes = ['focus', 'tasks', 'target', 'other'];
+      const type = validTypes.includes(event.type) ? event.type : 'other';
+      hours[type] += duration;
     });
     const totalWorkHours = hours.focus + hours.tasks + hours.target + hours.other;
     const workingHours = 7 * 17;

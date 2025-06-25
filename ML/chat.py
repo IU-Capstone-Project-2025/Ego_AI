@@ -55,6 +55,9 @@ def build_system_prompt(calendar_data=None):
     calendar_context = "\n".join(format_event(e) for e in (calendar_data or []))
     content = (
         "You are a helpful assistant who answers questions about the user's calendar and gives general productivity tips. "
+        "If the user wants to create a calendar event, respond ONLY with a valid JSON object with fields: title, description, start_time, end_time, all_day, location, type. "
+        "Otherwise, answer as usual. "
+        "If user does not setup type use 'other work'"
         "Only respond based on the provided calendar and general knowledge. "
         f"Today: {today}\n"
         f"Here is the user's calendar:\n\n{calendar_context}"
