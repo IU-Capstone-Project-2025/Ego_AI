@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, UUID4
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
 
@@ -24,6 +24,15 @@ class User(UserBase):
         from_attributes = True
 
 
+class UserMe(BaseModel):
+    id: UUID4
+    name: str
+    email: EmailStr
+
+    class Config:
+        from_attributes = True
+
+
 class EventBase(BaseModel):
     title: str
     description: Optional[str] = None
@@ -31,6 +40,7 @@ class EventBase(BaseModel):
     end_time: datetime
     all_day: bool = False
     location: Optional[str] = None
+    type: str  # 'focus', 'tasks', 'target', 'other'
 
 class EventCreate(EventBase):
     pass
@@ -42,6 +52,7 @@ class EventUpdate(BaseModel):
     end_time: Optional[datetime] = None
     all_day: Optional[bool] = None
     location: Optional[str] = None
+    type: Optional[str] = None
 
 class Event(EventBase):
     id: UUID4
@@ -116,4 +127,12 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    user_id: Optional[str] = None 
+    user_id: Optional[str] = None
+
+
+class LLM_ChatRequest(BaseModel):
+    message: str
+
+
+class LLM_ChatResponse(BaseModel):
+    response: str

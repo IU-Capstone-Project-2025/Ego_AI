@@ -25,6 +25,7 @@ class Event(Base):
     end_time = Column(DateTime(timezone=True), nullable=False)
     all_day = Column(Boolean, default=False)
     location = Column(String)
+    type = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

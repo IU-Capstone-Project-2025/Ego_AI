@@ -5,7 +5,7 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import Footer from "../../components/ui/footer";
 
-export const General = (): JSX.Element => {
+export const Root_page = (): JSX.Element => {
   const navItems = [
     "НАШИ ПРОДУКТЫ",
     "О ПРОЕКТЕ",
@@ -124,11 +124,11 @@ export const General = (): JSX.Element => {
     <Card className="absolute w-[620px] h-[700px] top-10 left-[740px] bg-white rounded-[25px] border-none shadow-none">
         <CardContent className="flex flex-col w-[540px] h-[397px] items-center gap-10 absolute top-20 left-10 p-0">
           <div className="relative self-stretch w-full h-40">
-          <div className="flex justify-center">
-            <Badge className="[font-family:'Manrope',Helvetica] font-semibold text-[#757575] text-xs text-center tracking-[0.24px] leading-3 bg-transparent hover:bg-transparent">
-              ПЕРВЫЙ ИИ-ПОМОЩНИК ДЛЯ ДОСТИЖЕНИЯ ЦЕЛЕЙ
-            </Badge>
-          </div>
+            <div className="flex justify-center">
+              <Badge className="[font-family:'Manrope',Helvetica] font-semibold text-[#757575] text-xs text-center tracking-[0.24px] leading-3 bg-transparent hover:bg-transparent">
+                ПЕРВЫЙ ИИ-ПОМОЩНИК ДЛЯ ДОСТИЖЕНИЯ ЦЕЛЕЙ
+              </Badge>
+            </div>
 
             <div className="absolute w-[540px] top-[31px] left-0 [font-family:'Manrope',Helvetica] font-bold text-[50px] text-center tracking-[-1.00px] leading-[55.0px]">
               <span className="text-[#232323] tracking-[-0.50px]">
@@ -157,7 +157,10 @@ export const General = (): JSX.Element => {
             </span>
           </div>
 
-          <Button className="w-[300px] h-[50px] bg-[#66d6b8] rounded-[10px] hover:bg-[#5ac1a6] transition-colors">
+          <Button
+            className="w-[300px] h-[50px] bg-[#66d6b8] rounded-[10px] hover:bg-[#5ac1a6] transition-colors"
+            onClick={() => window.location.href = "/calendar"}
+          >
             <span className="[font-family:'Manrope',Helvetica] font-bold text-[#232323] text-xs text-center tracking-[0.24px] leading-3 whitespace-nowrap">
               НАЧАТЬ ИСПОЛЬЗОВАТЬ
             </span>

@@ -51,6 +51,7 @@ def upgrade() -> None:
     sa.Column('end_time', sa.DateTime(timezone=True), nullable=False),
     sa.Column('all_day', sa.Boolean(), nullable=True),
     sa.Column('location', sa.String(), nullable=True),
+    sa.Column('type',sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
