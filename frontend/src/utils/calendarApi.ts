@@ -38,3 +38,13 @@ export async function createEvent(event: any) {
   if (!res.ok) throw new Error("Failed to create event");
   return res.json();
 }
+
+export async function deleteEvent(eventId: string) {
+  const res = await fetch(`${API_URL}/api/v1/calendar/delete_task?event_id=${encodeURIComponent(eventId)}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Failed to delete event");
+  return res;
+}

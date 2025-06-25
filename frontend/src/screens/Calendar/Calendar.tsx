@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { format, startOfWeek, addDays, addWeeks, subWeeks, isToday } from 'date-fns';
 import './Calendar.css';
-import { fetchEvents, createEvent } from '@/utils/calendarApi';
+import { fetchEvents, createEvent, deleteEvent } from '@/utils/calendarApi';
 
 // Types for our calendar events
 interface CalendarEvent {
@@ -136,6 +136,20 @@ export const Calendar: React.FC = () => {
     }
   };
 
+  // Удаление задачи
+  const handleDeleteEvent = async (eventId: string) => {
+    if (!window.confirm('Удалить задачу?')) return;
+    setIsLoading(true);
+    try {
+      await deleteEvent(eventId);
+      await loadCalendarEvents();
+    } catch (error) {
+      alert('Ошибка при удалении задачи.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Navigation functions
   const goToPreviousWeek = () => setCurrentDate(subWeeks(currentDate, 1));
   const goToNextWeek = () => setCurrentDate(addWeeks(currentDate, 1));
@@ -246,7 +260,15 @@ export const Calendar: React.FC = () => {
                           style={getTaskBlockStyle(event, hour)}
                           title={event.title}
                         >
-                          {event.title}
+                          <span>{event.title}</span>
+                          <button 
+                            className="delete-btn" 
+                            style={{marginLeft: 8, fontSize: 10, background: '#dc3545', color: 'white', border: 'none', borderRadius: 3, cursor: 'pointer', padding: '0 6px'}} 
+                            onClick={(e) => { e.stopPropagation(); handleDeleteEvent(event.id); }}
+                            title="Удалить задачу"
+                          >
+                            ✕
+                          </button>
                         </div>
                       ))}
                     </div>
