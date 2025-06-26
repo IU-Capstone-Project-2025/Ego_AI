@@ -16,7 +16,7 @@ export const Auth: React.FC = () => {
     
     try {
       // Проверяем нужно ли использовать бэкенд
-      const useBackend = import.meta.env.VITE_BACKEND_USE !== 'false';
+      const useBackend = (import.meta as any).env.VITE_BACKEND_USE !== 'false';
       
       if (useBackend) {
         // Реальная интеграция с Google OAuth

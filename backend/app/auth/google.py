@@ -120,7 +120,7 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
     if redirect_to_frontend:
         final_redirect_url = f"{settings.FRONTEND_URL}{redirect_to_frontend}"
     else:
-        final_redirect_url = f"{settings.FRONTEND_URL}/login/callback" # Fallback to a default frontend callback if no specific redirect_to
+        final_redirect_url = f"{settings.FRONTEND_URL}/auth/callback" # Fallback to the correct frontend callback route
 
     response = RedirectResponse(url=final_redirect_url, status_code=status.HTTP_302_FOUND)
     
