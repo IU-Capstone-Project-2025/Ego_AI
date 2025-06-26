@@ -32,7 +32,9 @@ cors_origins = [
     "http://egoai.duckdns.org",
     "https://egoai.duckdns.org",
     "http://localhost:3000",
-    "https://localhost:3000"
+    "https://localhost:3000",
+    "http://egoai.duckdns.org:3000",
+    "https://egoai.duckdns.org:3000"
 ]
 
 logger.info(f"CORS origins: {cors_origins}")
