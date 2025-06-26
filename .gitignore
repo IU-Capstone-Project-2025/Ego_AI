@@ -136,3 +136,4 @@ build/
 *.zip
 *.rpm
 *.deb
+.env*
