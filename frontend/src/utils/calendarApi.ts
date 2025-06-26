@@ -1,4 +1,4 @@
-const API_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai-api.duckdns.org";
+const API_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai.duckdns.org:8000";
 
 function getAuthHeaders() {
   // Authentication is handled via HTTP-only cookies
