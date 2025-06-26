@@ -1,5 +1,5 @@
 // API utility functions for making authenticated requests
-const API_BASE_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai-api.duckdns.org";
+const API_BASE_URL = (import.meta as any).env.VITE_API_URL ?? "";
 
 export const getAuthToken = (): string | null => {
   // Tokens are stored in HTTP-only cookies managed by the backend
