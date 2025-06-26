@@ -118,11 +118,9 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
     expires = datetime.now(timezone.utc) + expires_delta
 
     if redirect_to_frontend:
-        # Add token as query parameter for frontend
-        separator = "&" if "?" in redirect_to_frontend else "?"
-        final_redirect_url = f"{settings.FRONTEND_URL}{redirect_to_frontend}{separator}token={jwt_token}"
+        final_redirect_url = f"{settings.FRONTEND_URL}{redirect_to_frontend}"
     else:
-        final_redirect_url = f"{settings.FRONTEND_URL}/auth/callback?token={jwt_token}" # Fallback to the correct frontend callback route
+        final_redirect_url = f"{settings.FRONTEND_URL}/auth/callback?success=true" # Fallback to the correct frontend callback route
 
     response = RedirectResponse(url=final_redirect_url, status_code=status.HTTP_302_FOUND)
     
@@ -130,11 +128,11 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         key="access_token",
         value=jwt_token,
         httponly=True,
-        secure=True if settings.ENVIRONMENT == "production" else False,
-        samesite="none" if settings.ENVIRONMENT == "production" else "lax",
+        secure=False,  # Use False for HTTP
+        samesite="lax",  # Use lax for same-site requests
         max_age=int(expires_delta.total_seconds()),
         path="/",
-        domain=".duckdns.org" if settings.ENVIRONMENT == "production" else None
+        domain=None  # Let browser handle domain automatically
     )
     
     return response
@@ -146,10 +144,10 @@ async def logout(response: Response):
         key="access_token",
         value="",
         httponly=True,
-        secure=True if settings.ENVIRONMENT == "production" else False,
-        samesite="none" if settings.ENVIRONMENT == "production" else "lax",
+        secure=False,  # Use False for HTTP
+        samesite="lax",  # Use lax for same-site requests
         max_age=0,
         path="/",
-        domain=".duckdns.org" if settings.ENVIRONMENT == "production" else None
+        domain=None  # Let browser handle domain automatically
     )
     return {"message": "Successfully logged out"}
