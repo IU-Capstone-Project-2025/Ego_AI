@@ -129,10 +129,10 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         value=jwt_token,
         httponly=True,
         secure=True if settings.ENVIRONMENT == "production" else False,
-        samesite="lax",
+        samesite="none" if settings.ENVIRONMENT == "production" else "lax",
         max_age=int(expires_delta.total_seconds()),
         path="/",
-        domain=None
+        domain=".duckdns.org" if settings.ENVIRONMENT == "production" else None
     )
     
     return response
@@ -145,9 +145,9 @@ async def logout(response: Response):
         value="",
         httponly=True,
         secure=True if settings.ENVIRONMENT == "production" else False,
-        samesite="lax",
+        samesite="none" if settings.ENVIRONMENT == "production" else "lax",
         max_age=0,
         path="/",
-        domain=None
+        domain=".duckdns.org" if settings.ENVIRONMENT == "production" else None
     )
     return {"message": "Successfully logged out"}

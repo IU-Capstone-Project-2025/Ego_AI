@@ -22,7 +22,8 @@ export const Auth: React.FC = () => {
         // Реальная интеграция с Google OAuth
         // Передаем информацию о том, куда перенаправить после авторизации
         const redirectTo = encodeURIComponent(from);
-        window.location.href = `/api/v1/auth/google?redirect_to=${redirectTo}`;
+        const API_BASE_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai-api.duckdns.org";
+        window.location.href = `${API_BASE_URL}/api/v1/auth/google?redirect_to=${redirectTo}`;
         return;
       }
       
