@@ -6,19 +6,13 @@ export const AuthCallback: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    // Получаем параметры из URL (success, error, redirect_to, token)
+    // Получаем параметры из URL (success, error, redirect_to)
     const success = searchParams.get('success');
     const error = searchParams.get('error');
-    const token = searchParams.get('token');
-    const redirectTo = searchParams.get('redirect_to') || '/chat';
+    const redirectTo = searchParams.get('redirect_to') ?? '/chat';
 
-    if (token) {
-      // Сохраняем токен в localStorage
-      localStorage.setItem('access_token', token);
-      // Успешная авторизация - перенаправляем на исходную страницу
-      navigate(redirectTo, { replace: true });
-    } else if (success === 'true') {
-      // Успешная авторизация без токена в URL (использует cookie)
+    if (success === 'true') {
+      // Успешная авторизация - токен уже установлен в HTTP-only cookie
       navigate(redirectTo, { replace: true });
     } else if (error) {
       // Ошибка авторизации - показываем ошибку и перенаправляем на страницу входа

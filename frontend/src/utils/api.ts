@@ -2,12 +2,13 @@
 const API_BASE_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai-api.duckdns.org";
 
 export const getAuthToken = (): string | null => {
-  return localStorage.getItem("access_token");
+  // Tokens are stored in HTTP-only cookies managed by the backend
+  return null;
 };
 
 export const isAuthenticated = (): boolean => {
-  const token = getAuthToken();
-  return !!token;
+  // Authentication status should be checked via API call to /users/me
+  return false;
 };
 
 export const logout = async (): Promise<void> => {
@@ -20,26 +21,17 @@ export const logout = async (): Promise<void> => {
   } catch (error) {
     console.error('Logout request failed:', error);
   }
-  // Remove token from localStorage
-  localStorage.removeItem("access_token");
-  // Instead of direct redirect, we'll let the calling component handle navigation
-  // This allows for better React Router integration
 };
 
 export const apiRequest = async (
   endpoint: string,
   options: RequestInit = {}
 ): Promise<Response> => {
-  const token = getAuthToken();
   const url = `${API_BASE_URL}/api/v1${endpoint}`;
   
   const defaultHeaders: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  
-  if (token) {
-    defaultHeaders.Authorization = `Bearer ${token}`;
-  }
   
   const config: RequestInit = {
     ...options,
@@ -47,7 +39,7 @@ export const apiRequest = async (
       ...defaultHeaders,
       ...options.headers,
     },
-    credentials: 'include', // Include HTTP-only cookies as fallback
+    credentials: 'include', // Always include cookies
   };
   
   try {
