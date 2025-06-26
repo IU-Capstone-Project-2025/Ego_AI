@@ -53,7 +53,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/v1/users/me', {
+      const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL ?? "http://egoai-api.duckdns.org";
+      const response = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

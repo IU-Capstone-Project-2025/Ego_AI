@@ -38,11 +38,10 @@ cors_origins = [
 
 logger.info(f"CORS origins: {cors_origins}")
 
-#app.add_middleware(
-#    CustomCORSMiddleware,
-#    allow_origins=cors_origins,
-#    allow_credentials=True
-#)
+    CustomCORSMiddleware,
+    allow_origins=cors_origins,
+    allow_credentials=True
+)
 
 
 app.include_router(api_router, prefix=settings.API_V1_STR)

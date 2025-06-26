@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_BACKEND_API_URL ?? "http://localhost:8000";
+const API_URL = import.meta.env.VITE_BACKEND_API_URL ?? "http://egoai-api.duckdns.org";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("access_token");

@@ -8,7 +8,7 @@ export const Auth: React.FC = () => {
   const location = useLocation();
   
   // Получаем страницу, с которой пользователь был перенаправлен
-  const from = location.state?.from?.pathname || '/chat';
+  const from = location.state?.from?.pathname || '/calendar';
   const authError = location.state?.error;
 
   const handleGoogleAuth = async () => {
@@ -21,8 +21,9 @@ export const Auth: React.FC = () => {
       if (useBackend) {
         // Реальная интеграция с Google OAuth
         // Передаем информацию о том, куда перенаправить после авторизации
+        const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL ?? "http://egoai-api.duckdns.org";
         const redirectTo = encodeURIComponent(from);
-        window.location.href = `/api/v1/auth/google?redirect_to=${redirectTo}`;
+        window.location.href = `${API_BASE_URL}/api/v1/auth/google?redirect_to=${redirectTo}`;
         return;
       }
       
