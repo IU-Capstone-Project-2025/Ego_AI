@@ -1,8 +1,11 @@
 const API_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai-api.duckdns.org";
 
 function getAuthHeaders() {
-  // Since we're using HTTP-only cookies, we don't need to manually add Authorization header
+  const token = localStorage.getItem("access_token");
   const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
   return headers;
 }
 

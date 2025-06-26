@@ -118,9 +118,11 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
     expires = datetime.now(timezone.utc) + expires_delta
 
     if redirect_to_frontend:
-        final_redirect_url = f"{settings.FRONTEND_URL}{redirect_to_frontend}"
+        # Add token as query parameter for frontend
+        separator = "&" if "?" in redirect_to_frontend else "?"
+        final_redirect_url = f"{settings.FRONTEND_URL}{redirect_to_frontend}{separator}token={jwt_token}"
     else:
-        final_redirect_url = f"{settings.FRONTEND_URL}/auth/callback" # Fallback to the correct frontend callback route
+        final_redirect_url = f"{settings.FRONTEND_URL}/auth/callback?token={jwt_token}" # Fallback to the correct frontend callback route
 
     response = RedirectResponse(url=final_redirect_url, status_code=status.HTTP_302_FOUND)
     
