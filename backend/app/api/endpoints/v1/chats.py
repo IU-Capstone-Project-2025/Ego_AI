@@ -43,20 +43,14 @@ async def add_message(data: schemas.AddMessageRequest):
 
 @router.get("/get_messages")
 async def get_message(user_id: str= Query(...)):
-    try:
-        print(f"Getting messages for user {user_id}")
-        chat = await collection.find_one({"user_id": user_id})
-        if chat:
-            messages = chat.get("messages", [])
-            print(f"Found {len(messages)} messages for user {user_id}")
-            return messages
-        else:
-            print(f"No chat found for user {user_id}")
-            return []
-    except Exception as e:
-        print(f"Error getting messages for user {user_id}: {str(e)}")
-        # Return empty array as fallback instead of failing
-        print("Returning empty messages as fallback due to error")
+    print(f"Getting messages for user {user_id}")
+    chat = await collection.find_one({"user_id": user_id})
+    if chat:
+        messages = chat.get("messages", [])
+        print(f"Found {len(messages)} messages for user {user_id}")
+        return messages
+    else:
+        print(f"No chat found for user {user_id}")
         return []
 
 @router.delete("/delete_messages")
