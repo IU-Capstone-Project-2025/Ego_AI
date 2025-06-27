@@ -71,6 +71,17 @@ services:
     networks:
       - ego-ai-network
 
+  # nginx:
+  #   build: ./nginx
+  #   container_name: ego-ai-nginx
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #   networks:
+  #     - ego-ai-network
+
 volumes:
   postgres_data:
 

@@ -9,10 +9,10 @@ export const AuthCallback: React.FC = () => {
     // Получаем параметры из URL (success, error, redirect_to)
     const success = searchParams.get('success');
     const error = searchParams.get('error');
-    const redirectTo = searchParams.get('redirect_to') || '/chat';
+    const redirectTo = searchParams.get('redirect_to') ?? '/chat';
 
     if (success === 'true') {
-      // Успешная авторизация - перенаправляем на исходную страницу
+      // Успешная авторизация - токен уже установлен в HTTP-only cookie
       navigate(redirectTo, { replace: true });
     } else if (error) {
       // Ошибка авторизации - показываем ошибку и перенаправляем на страницу входа

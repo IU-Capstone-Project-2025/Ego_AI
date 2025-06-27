@@ -1,11 +1,8 @@
-const API_URL = import.meta.env.VITE_BACKEND_API_URL ?? "http://localhost:8000";
+const API_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai.duckdns.org:8000";
 
 function getAuthHeaders() {
-  const token = localStorage.getItem("access_token");
+  // Authentication is handled via HTTP-only cookies
   const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
   return headers;
 }
 

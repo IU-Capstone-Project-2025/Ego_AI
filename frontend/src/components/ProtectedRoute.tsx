@@ -18,7 +18,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   useEffect(() => {
     // Проверяем переменную окружения для защиты маршрутов
-    const isProtectionEnabled = import.meta.env.VITE_PROTECTED !== 'false';
+    const isProtectionEnabled = (import.meta as any).env.VITE_PROTECTED !== 'false';
     
     if (!isProtectionEnabled) {
       // Если защита отключена, сразу разрешаем доступ
@@ -32,7 +32,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
 
     // Проверяем нужно ли использовать бэкенд
-    const useBackend = import.meta.env.VITE_BACKEND_USE !== 'false';
+    const useBackend = (import.meta as any).env.VITE_BACKEND_USE !== 'false';
     
     if (!useBackend) {
       // Если бэкенд не используется, имитируем успешную авторизацию
@@ -53,7 +53,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch('/api/v1/users/me', {
+      const API_BASE_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai.duckdns.org:8000";
+      const response = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

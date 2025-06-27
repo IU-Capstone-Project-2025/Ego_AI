@@ -20,6 +20,7 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
+    # Get token only from HTTP-only cookie for security
     token = request.cookies.get("access_token")
     if not token:
         raise credentials_exception

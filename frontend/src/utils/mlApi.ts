@@ -1,4 +1,4 @@
-const ML_API_URL = import.meta.env.VITE_ML_API_URL ?? "http://localhost:8001";
+const ML_API_URL = import.meta.env.VITE_ML_API_URL ?? "http://egoai.duckdns.org:8001";
 
 export async function chatWithML(message: string, calendar?: any) {
   const response = await fetch(`${ML_API_URL}/chat`, {

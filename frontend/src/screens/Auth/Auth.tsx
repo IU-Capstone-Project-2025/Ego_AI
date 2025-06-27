@@ -16,13 +16,14 @@ export const Auth: React.FC = () => {
     
     try {
       // Проверяем нужно ли использовать бэкенд
-      const useBackend = import.meta.env.VITE_BACKEND_USE !== 'false';
+      const useBackend = (import.meta as any).env.VITE_BACKEND_USE !== 'false';
       
       if (useBackend) {
         // Реальная интеграция с Google OAuth
         // Передаем информацию о том, куда перенаправить после авторизации
         const redirectTo = encodeURIComponent(from);
-        window.location.href = `/api/v1/auth/google?redirect_to=${redirectTo}`;
+        const API_BASE_URL = (import.meta as any).env.VITE_API_URL ?? "http://egoai.duckdns.org:8000";
+        window.location.href = `${API_BASE_URL}/api/v1/auth/google?redirect_to=${redirectTo}`;
         return;
       }
       

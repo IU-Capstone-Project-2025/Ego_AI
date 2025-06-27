@@ -3,6 +3,8 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env
+.env.save
 
 # Build
 build/
@@ -134,3 +136,4 @@ build/
 *.zip
 *.rpm
 *.deb
+.env*

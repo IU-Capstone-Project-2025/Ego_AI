@@ -8,6 +8,7 @@ from app.core import settings
 from app.core.logging import logger
 from app.api import api_router
 from app.core.exception_handlers import add_exception_handlers
+from app.core.cors_middleware import CustomCORSMiddleware
 
 # Alembic теперь управляет созданием таблиц, поэтому эта строка не нужна
 # from app.database import Base, engine 
@@ -32,19 +33,14 @@ cors_origins = [
     "http://egoai.duckdns.org",
     "https://egoai.duckdns.org",
     "http://localhost:3000",
-    "https://localhost:3000",
-    "http://egoai.duckdns.org:3000",
-    "https://egoai.duckdns.org:3000"
+    "https://localhost:3000"
 ]
 
 logger.info(f"CORS origins: {cors_origins}")
 
-app.add_middleware(
-    CORSMiddleware,
+    CustomCORSMiddleware,
     allow_origins=cors_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    allow_credentials=True
 )
 
 

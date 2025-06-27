@@ -37,9 +37,13 @@ class Settings(BaseSettings):
         else:
             origins = [self.BACKEND_CORS_ORIGINS]
         
-        # REMOVE THIS IN PRODUCTION!
-        if self.ENVIRONMENT == "development" and "null" not in origins:
-            origins.append("null")
+        # Ensure we have the production origins
+        production_origins = ["http://egoai.duckdns.org", "https://egoai.duckdns.org"]
+        for origin in production_origins:
+            if origin not in origins:
+                origins.append(origin)
+                
+        return origins
             
         return origins
 
