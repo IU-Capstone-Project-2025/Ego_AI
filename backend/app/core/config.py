@@ -38,8 +38,15 @@ class Settings(BaseSettings):
         else:
             origins = [self.BACKEND_CORS_ORIGINS]
         
-        # Ensure we have the production origins
-        production_origins = ["http://egoai.duckdns.org", "https://egoai.duckdns.org"]
+        # Ensure we have the production origins with proper ports
+        production_origins = [
+            "http://egoai.duckdns.org", 
+            "https://egoai.duckdns.org",
+            "http://egoai.duckdns.org:3000", 
+            "https://egoai.duckdns.org:3000",
+            "http://egoai.duckdns.org:8000", 
+            "https://egoai.duckdns.org:8000"
+        ]
         for origin in production_origins:
             if origin not in origins:
                 origins.append(origin)
