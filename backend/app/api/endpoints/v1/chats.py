@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, QueryAdd
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
 from typing import List
 from motor.motor_asyncio import AsyncIOMotorClient
