@@ -1,4 +1,4 @@
-const ML_API_URL = import.meta.env.VITE_ML_API_URL ?? "http://185.207.133.14:8001";
+const ML_API_URL = import.meta.env.VITE_ML_API_URL ?? "http://ego-ai-ml-service:8001";
 
 export async function chatWithML(message: string, history?: any, calendar?: any) {
   try {
