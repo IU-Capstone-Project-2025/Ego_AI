@@ -136,3 +136,12 @@ class LLM_ChatRequest(BaseModel):
 
 class LLM_ChatResponse(BaseModel):
     response: str
+
+class Message(BaseModel):
+    role: str
+    content: str
+
+class AddMessageRequest(BaseModel):
+    user_id: str
+    role: str
+    content: str
