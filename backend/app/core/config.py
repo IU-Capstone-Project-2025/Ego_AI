@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     GOOGLE_REDIRECT_URI: Optional[str] = "http://localhost:8000/api/v1/auth/google/callback"
     
     DATABASE_URL: PostgresDsn
+    MONGO_URL: Optional[str] = None
 
     GROQ_API_KEY: Optional[str] = None
 
@@ -43,8 +44,6 @@ class Settings(BaseSettings):
             if origin not in origins:
                 origins.append(origin)
                 
-        return origins
-            
         return origins
 
 
