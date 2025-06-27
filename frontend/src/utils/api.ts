@@ -76,3 +76,47 @@ export const apiPut = (endpoint: string, data?: any): Promise<Response> =>
 
 export const apiDelete = (endpoint: string): Promise<Response> =>
   apiRequest(endpoint, { method: "DELETE" });
+
+export const saveChatMessage = async (user_id: string, role: 'user' | 'llm', content: string) => {
+  console.log('Saving chat message:', { user_id, role, content: content.substring(0, 50) + '...' });
+  try {
+    const response = await apiPost('/chats/add_message', { user_id, role, content });
+    console.log('saveChatMessage response status:', response.status);
+    return response;
+  } catch (error) {
+    console.error('saveChatMessage error:', error);
+    throw error;
+  }
+};
+
+// Исправить путь для получения истории чата
+export const getChatHistory = async (user_id: string) => {
+  console.log('Fetching chat history for user:', user_id);
+  try {
+    const response = await apiGet(`/chats/get_messages?user_id=${user_id}`);
+    console.log('getChatHistory response status:', response.status);
+    return response;
+  } catch (error) {
+    console.error('getChatHistory error:', error);
+    throw error;
+  }
+};
+
+export const getCurrentUserId = async (): Promise<string | null> => {
+  try {
+    console.log('Fetching current user ID...');
+    const res = await apiGet('/users/me');
+    console.log('getCurrentUserId response status:', res.status);
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('getCurrentUserId failed:', errorText);
+      return null;
+    }
+    const data = await res.json();
+    console.log('getCurrentUserId response data:', data);
+    return data.id ?? null;
+  } catch (error) {
+    console.error('getCurrentUserId error:', error);
+    return null;
+  }
+};
