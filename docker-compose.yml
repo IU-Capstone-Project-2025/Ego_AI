@@ -71,6 +71,19 @@ services:
     networks:
       - ego-ai-network
 
+  mongo:
+    image: mongo:latest
+    container_name: ego_ai_mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    networks:
+      - ego-ai-network
+
   # nginx:
   #   build: ./nginx
   #   container_name: ego-ai-nginx
@@ -84,6 +97,7 @@ services:
 
 volumes:
   postgres_data:
+  mongo_data:
 
 networks:
   ego-ai-network:

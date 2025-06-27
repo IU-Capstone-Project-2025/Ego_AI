@@ -6,7 +6,8 @@ from .schemas import (
     User_Settings, User_SettingsCreate, User_SettingsUpdate,
     Token, TokenData,
     UserMe,
-    LLM_ChatRequest, LLM_ChatResponse
+    LLM_ChatRequest, LLM_ChatResponse,
+    AddMessageRequest
 )
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     "User_Settings", "User_SettingsCreate", "User_SettingsUpdate",
     "Token", "TokenData",
     "UserMe",
-    "LLM_ChatRequest", "LLM_ChatResponse"
+    "LLM_ChatRequest", "LLM_ChatResponse",
+    "AddMessageRequest"
 ]
